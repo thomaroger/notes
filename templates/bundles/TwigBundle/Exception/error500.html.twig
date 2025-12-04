@@ -1,0 +1,24 @@
+{# templates/bundles/TwigBundle/Exception/error500.html.twig #}
+{% extends 'base.login.html.twig' %}
+
+{% block title %}Notes - Erreur serveur{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="card shadow-sm p-4">
+            <h2 class="mb-3">Erreur 500 - Erreur serveur</h2>
+            <p class="mb-4">
+                Il y a eu une erreur sur cette page.<br>
+                Merci de contacter l'administrateur.
+            </p>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">Retour à l'accueil</a>
+            {% elseif is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin') }}" class="btn btn-primary btn-lg">Retour au backoffice</a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary btn-lg">Se connecter</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,26 @@
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: ["!event", "!deprecation"]  # exclut les events & dépréciations
+
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine", "!deprecation"]
+
+when@prod:
+    monolog:
+        handlers:
+            main:
+                type: stream
+                path: "%kernel.logs_dir%/prod.log"
+                level: info
+                channels: ["!event", "!deprecation"]
+
+            console:
+                type: console
+                process_psr_3_messages: false
+                channels: ["!event", "!doctrine", "!deprecation"]

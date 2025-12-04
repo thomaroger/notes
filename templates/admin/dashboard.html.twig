@@ -1,0 +1,131 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Notes - Tableau de bord{% endblock %}
+
+{% block main %}
+    <div class="p-4">
+        
+        <div class="row g-4">
+            {# Nombre d'élèves #}
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fa fa-child fa-3x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1">Élèves</h5>
+                            <h2 class="mb-0">{{ stats.children }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ChildCrudController').setAction('index') }}" class="btn btn-sm w-100">
+                            Voir la liste <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {# Nombre de classes #}
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fa fa-calendar fa-3x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1">Classes</h5>
+                            <h2 class="mb-0">{{ stats.schoolClasses }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\SchoolClassCrudController').setAction('index') }}" class="btn btn-sm w-100">
+                            Voir la liste <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {# Nombre d'évaluations #}
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fa fa-clipboard-list fa-3x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1">Évaluations</h5>
+                            <h2 class="mb-0">{{ stats.assessments }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\AssessmentCrudController').setAction('index') }}" class="btn btn-sm w-100">
+                            Voir la liste <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {# Nombre de notes #}
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fa fa-star fa-3x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1">Notes</h5>
+                            <h2 class="mb-0">{{ stats.scores }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ScoreCrudController').setAction('index') }}" class="btn btn-sm w-100">
+                            Voir la liste <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {# Nombre de thèmes #}
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fa fa-tag fa-3x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1">Thèmes</h5>
+                            <h2 class="mb-0">{{ stats.themes }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ThemeCrudController').setAction('index') }}" class="btn btn-sm w-100">
+                            Voir la liste <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {# Nombre d'utilisateurs #}
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fa fa-users fa-3x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1">Utilisateurs</h5>
+                            <h2 class="mb-0">{{ stats.users }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\UserCrudController').setAction('index') }}" class="btn btn-sm w-100">
+                            Voir la liste <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
