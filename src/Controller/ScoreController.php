@@ -32,7 +32,7 @@ class ScoreController extends AbstractController
         $children = $assessment->getSchoolClass()
             ->getChildren()
             ->toArray();
-        usort($children, fn ($a, $b) => strcmp($a->getFirstName(), $b->getFirstName())); // ordre alphabétique
+        usort($children, fn ($a, $b) => strcmp($a->getLastName(), $b->getLastName())); // ordre alphabétique
 
         return $this->render('front/score/edit.html.twig', [
             'assessment' => $assessment,
