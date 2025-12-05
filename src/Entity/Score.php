@@ -26,9 +26,12 @@ class Score
     #[ORM\JoinColumn(nullable: false)]
     private ?Assessment $assessment = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'float', nullable: true)]
     #[Assert\Range(min: 0, notInRangeMessage: 'La note doit être supérieure ou égale à 0.')]
     private ?float $score = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $absent = false;
 
     public function __toString(): string
     {
@@ -90,10 +93,21 @@ class Score
         return $this->score;
     }
 
-    public function setScore(float $score): static
+    public function setScore(?float $score): static
     {
         $this->score = $score;
 
+        return $this;
+    }
+
+    public function isAbsent(): bool
+    {
+        return $this->absent;
+    }
+
+    public function setAbsent(bool $absent): static
+    {
+        $this->absent = $absent;
         return $this;
     }
 }

@@ -200,6 +200,16 @@ main {
   padding-bottom: 2rem !important;
 }
 
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 .text-warning a {
   color : #ffc107;
   text-decoration: none;

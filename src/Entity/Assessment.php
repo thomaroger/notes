@@ -33,6 +33,10 @@ class Assessment
     #[Assert\Range(min: 1, max: 20, notInRangeMessage: 'La notation maximale doit être entre 1 et 20.')]
     private ?int $maxScore = null;
 
+    #[ORM\Column(type: 'datetime')]
+    #[Assert\NotNull(message: 'La date de l’évaluation est obligatoire.')]
+    private ?\DateTimeInterface $date = null;
+
     #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'assessment', orphanRemoval: true)]
     private Collection $scores;
 
@@ -96,6 +100,17 @@ class Assessment
     {
         $this->maxScore = $maxScore;
 
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): static
+    {
+        $this->date = $date;
         return $this;
     }
 
