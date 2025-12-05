@@ -28,7 +28,9 @@ class ChildController extends AbstractController
         }
 
         $childId = $request->query->get('child');
-        $children = $childRepository->findAll();
+        $children = $childRepository->findby([], [
+            'lastName' => 'ASC',
+        ]);
 
         if (! $children) {
             $this->addFlash('warning', 'Aucun enfant trouvé.');

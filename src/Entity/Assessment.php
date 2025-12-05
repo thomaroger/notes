@@ -122,6 +122,12 @@ class Assessment
         return $this->scores;
     }
 
+    public function setScores(array $scores): static
+    {
+        $this->scores = new ArrayCollection($scores);
+        return $this;
+    }
+
     public function addScore(Score $score): static
     {
         if (! $this->scores->contains($score)) {

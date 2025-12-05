@@ -89,6 +89,18 @@ class HomeController extends AbstractController
 
         ksort($groupedByTheme, SORT_NATURAL | SORT_FLAG_CASE);
 
+        foreach ($groupedByTheme as $assessments) {
+            foreach ($assessments as $assessment) {
+                $scores = $assessment->getScores()
+                    ->toArray(); // récupérer dans une variable
+                usort($scores, function ($a, $b) {
+                    return strcmp($a->getChild()->getLastName(), $b->getChild()->getLastName())
+                        ?: strcmp($a->getChild()->getFirstName(), $b->getChild()->getFirstName());
+                });
+                $assessment->setScores($scores); // si tu as un setter, mettre à jour l'objet
+            }
+        }
+
         return $this->render('front/index.html.twig', [
             'user' => $user,
             'groupedByTheme' => $groupedByTheme,
