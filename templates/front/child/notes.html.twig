@@ -1,11 +1,9 @@
 {# templates/front/child/notes.html.twig #}
 {% extends 'base.html.twig' %}
-
 {% block title %}Notes -
 	{{ child.firstName }}
 	{{ child.lastName }}
 {% endblock %}
-
 {% block body %}
 	<div class="container mt-4">
 		<div class="d-flex justify-content-between align-items-center mb-4">
@@ -29,7 +27,6 @@
 				</form>
 			</div>
 		</div>
-
 		{% for theme, assessments in groupedByTheme %}
 			<div class="card shadow-sm mb-4">
 				<div class="card-header bg-secondary text-white">
@@ -53,7 +50,6 @@
 									{% set scoreValue = scoreObj ? scoreObj.score : null %}
 									{% set absent = scoreObj and scoreObj.absent ?? false %}
 									{% set percentage = scoreValue is not null ? (scoreValue / assessment.maxScore) * 100 : 0 %}
-
 									{% set rowClass = '' %}
 									{% if absent %}
 										{% set rowClass = 'table-warning' %}
@@ -64,15 +60,19 @@
 									{% else %}
 										{% set rowClass = 'table-success' %}
 									{% endif %}
-
 									<tr class="{{ rowClass }}">
-                                        <td>
-                                        <a href="{{ path('score_edit', {'assessment': assessment.id}) }}">{{ assessment.title }} - {{ assessment.date|date('d/m/Y') }}</a>
-                                        </td>
 										<td>
-											{% if absent %} Absent
+											<a href="{{ path('score_edit', {'assessment': assessment.id}) }}">{{ assessment.title }}
+												-
+												{{ assessment.date|date('d/m/Y') }}</a>
+										</td>
+										<td>
+											{% if absent %}
+												Absent
 											{% else %}
-												{{ scoreValue }} / {{ assessment.maxScore }}
+												{{ scoreValue }}
+												/
+												{{ assessment.maxScore }}
 											{% endif %}
 										</td>
 										<td>
@@ -81,7 +81,6 @@
 											{% endif %}
 										</td>
 									</tr>
-
 									{% if not absent %}
 										{% set totalScore = totalScore + scoreValue %}
 										{% set totalMax = totalMax + assessment.maxScore %}
@@ -90,7 +89,8 @@
 								{# Ligne pour le pourcentage global du thème #}
 								<tr class="fw-bold">
 									<td colspan="2">Pourcentage global
-										{{ theme }}</td>
+										{{ theme }}
+									</td>
 									<td>
 										{% if totalMax > 0 %}
 											{{ ((totalScore / totalMax) * 100)|number_format(0) }}%
@@ -107,4 +107,3 @@
 		{% endfor %}
 	</div>
 {% endblock %}
-

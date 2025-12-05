@@ -22,7 +22,10 @@ return static function (ECSConfig $ecsConfig): void {
     ]);
 
     // Dossiers à analyser
-    $ecsConfig->paths([__DIR__ . '/src', __DIR__ . '/config', __DIR__ . '/migrations']);
+    $ecsConfig->paths([__DIR__ . '/src', __DIR__ . '/config', __DIR__ . '/migrations', __DIR__ . '/templates']);
+
+    $ecsConfig->indentation('    ');
+    $ecsConfig->lineEnding("\n");
 
     // Fichiers à ignorer
     $ecsConfig->skip([

@@ -3,21 +3,23 @@
 
 {% block title %}Notes - Accès refusé{% endblock %}
 
-{% block body %}
+  {% block body %}
     <div class="container">
-        <div class="card shadow-sm p-4">
-            <h2 class="mb-3">Erreur 403 - Accès refusé</h2>
-            <p class="mb-4">
-                Vous n'avez pas les permissions nécessaires pour accéder à cette page.
+      <div class="card shadow-sm p-4">
+        <h2 class="mb-3">Erreur 403 - Accès refusé</h2>
+          <p class="mb-4">
+            Vous n'avez pas les permissions nécessaires pour accéder à cette page.
             </p>
             {% if is_granted('ROLE_USER') %}
-                <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">Retour à l'accueil</a>
-            {% elseif is_granted('ROLE_ADMIN') %}
+              <a href="{{ path('app_home') }}" class="btn btn-primary btn-lg">Retour à l'accueil</a>
+              {% elseif is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('admin') }}" class="btn btn-primary btn-lg">Retour au backoffice</a>
-            {% else %}
-                <a href="{{ path('app_login') }}" class="btn btn-primary btn-lg">Se connecter</a>
-            {% endif %}
-        </div>
-    </div>
-{% endblock %}
+                {% else %}
+                  <a href="{{ path('app_login') }}" class="btn btn-primary btn-lg">Se connecter</a>
+                  {% endif %}
+
+
+                  </div>
+                  </div>
+                {% endblock %}
 
