@@ -14,6 +14,10 @@ monolog:
 when@prod:
     monolog:
         handlers:
+            error_log_handler:
+                type: error_log
+                level: info
+                
             main:
                 type: stream
                 path: "%kernel.logs_dir%/prod.log"
