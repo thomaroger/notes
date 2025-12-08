@@ -61,11 +61,14 @@ class Category
     public function getName(): ?string
     {
         if ($this->hasParent()) {
-            return $this->getParent()
+
+            return $this->getTheme()
+                ->getName() . ' - ' . $this->getParent()
                 ->name . ' - ' . $this->name;
         }
 
-        return $this->name;
+        return $this->getTheme()
+            ->getName() . ' - ' . $this->name;
     }
 
     public function setName(string $name): self

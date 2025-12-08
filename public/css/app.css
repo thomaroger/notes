@@ -173,21 +173,9 @@ body {
   background-color: #f1f1f1;
 }
 
-.dark .footer,
-.dark .select2 .selection .select2-selection,
-.dark .select2-container .select2-results,
-.dark .select2-container--bootstrap-5 .select2-dropdown .select2-search,
-.dark .select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field,
-.dark .select2-container--default .select2-selection--single .select2-selection__rendered,
-.dark .select2-search--dropdown {
+.dark .footer {
   background-color: rgb(33, 37, 41);
   color: white;
-}
-
-
-.dark .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--selected
-{
-    background-color: #495057;
 }
 
 

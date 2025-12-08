@@ -31,8 +31,10 @@ class AssessmentType extends AbstractType
                 'query_builder' => function (\Doctrine\ORM\EntityRepository $er) {
                     return $er->createQueryBuilder('c')
                         ->leftJoin('c.parent', 'p')
+                        ->leftJoin('p.theme', 't')
                         ->where('c.parent IS NOT NULL')
-                        ->orderBy('p.name', 'ASC')
+                        ->orderBy('t.name', 'ASC')
+                        ->addOrderBy('p.name', 'ASC')
                         ->addOrderBy('c.name', 'ASC');
                 },
             ])
