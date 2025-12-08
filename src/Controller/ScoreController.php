@@ -49,6 +49,7 @@ class ScoreController extends AbstractController
         ChildRepository $childRepository,
         AssessmentRepository $assessmentRepository
     ): JsonResponse {
+
         $childId = $request->request->get('childId');
         $assessmentId = $request->request->get('assessmentId');
 
@@ -89,6 +90,9 @@ class ScoreController extends AbstractController
             $em->persist($score);
             $em->flush();
 
+            $connection = $em->getConnection();
+            $connection->executeStatement('TRUNCATE TABLE stat;');
+
             return new JsonResponse([
                 'status' => 'success',
                 'message' => $absent ? 'Absent' : 'Présent',
@@ -112,6 +116,9 @@ class ScoreController extends AbstractController
 
             $em->persist($score);
             $em->flush();
+
+            $connection = $em->getConnection();
+            $connection->executeStatement('TRUNCATE TABLE stat;');
 
             return new JsonResponse([
                 'status' => 'success',
