@@ -149,12 +149,11 @@ class StatController extends AbstractController
 
                         // Création de la stat
                         if ($existing) {
-                            $existing->setDate($data);
-                            $em->persist($existing);
-                        } else {
-                            $stat = new Stat('assessment', $assessment->getId(), $data);
-                            $em->persist($stat);
+                            continue;
                         }
+                        $stat = new Stat('assessment', $assessment->getId(), $data);
+                        $em->persist($stat);
+
                         $em->flush();
 
                         $created++;
@@ -180,12 +179,11 @@ class StatController extends AbstractController
                     $subCategoryData['maxscore'] = $subCategoryData['numberAssessment'] !== 0 ? $subCategoryMaxScore / $subCategoryData['numberAssessment'] : 0;
 
                     if ($existing) {
-                        $existing->setData($subCategoryData);
-                        $em->persist($existing);
-                    } else {
-                        $subCategoryStat = new Stat('category', $subcategory->getId(), $subCategoryData);
-                        $em->persist($subCategoryStat);
+                        continue;
                     }
+                    $subCategoryStat = new Stat('category', $subcategory->getId(), $subCategoryData);
+                    $em->persist($subCategoryStat);
+
                     $em->flush();
 
                     $created++;
@@ -208,12 +206,11 @@ class StatController extends AbstractController
                 $parentCategoryData['maxscore'] = $parentCategoryData['numberAssessment'] !== 0 ? $parentCategoryMaxScore / $parentCategoryData['numberAssessment'] : 0;
 
                 if ($existing) {
-                    $existing->setData($parentCategoryData);
-                    $em->persist($existing);
-                } else {
-                    $parentCategoryStat = new Stat('category', $category->getId(), $parentCategoryData);
-                    $em->persist($parentCategoryStat);
+                    continue;
                 }
+                $parentCategoryStat = new Stat('category', $category->getId(), $parentCategoryData);
+                $em->persist($parentCategoryStat);
+
                 $em->flush();
 
                 $created++;
@@ -236,12 +233,10 @@ class StatController extends AbstractController
             $themeData['maxscore'] = $themeData['numberAssessment'] !== 0 ? $themeMaxScore / $themeData['numberAssessment'] : 0;
 
             if ($existing) {
-                $existing->setData($themeData);
-                $em->persist($existing);
-            } else {
-                $themeStat = new Stat('theme', $theme->getId(), $themeData);
-                $em->persist($themeStat);
+                continue;
             }
+            $themeStat = new Stat('theme', $theme->getId(), $themeData);
+            $em->persist($themeStat);
 
             $created++;
 
