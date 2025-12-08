@@ -217,3 +217,7 @@ a:hover {
 .text-warning a:hover {
   text-decoration: underline;
 }
+
+.card .card {
+  margin : 10px;
+}

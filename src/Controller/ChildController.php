@@ -66,14 +66,30 @@ class ChildController extends AbstractController
         // Groupement des évaluations par thème
         $groupedByTheme = [];
         foreach ($assessments as $assessment) {
-            $themeName = $assessment->getCategory()
-                ->getParent()
-                ->getTheme()
-                ->getName();
-            if (! isset($groupedByTheme[$themeName])) {
-                $groupedByTheme[$themeName] = [];
+
+            $category = $assessment->getCategory();
+            $parentCategory = $category->getParent();
+            $theme = $parentCategory->getTheme();
+
+            if (! isset($groupedByTheme[$theme->getId()])) {
+                $groupedByTheme[$theme->getId()] = [
+                    'theme' => $theme,
+                    'categories' => [],
+                ];
             }
-            $groupedByTheme[$themeName][] = $assessment;
+            if (! isset($groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()])) {
+                $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()] = [
+                    'category' => $parentCategory,
+                    'categories' => [],
+                ];
+            }
+            if (! isset($groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()])) {
+                $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()] = [
+                    'category' => $category,
+                    'assessments' => [],
+                ];
+            }
+            $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()]['assessments'][] = $assessment;
         }
 
         return $this->render('front/child/notes.html.twig', [

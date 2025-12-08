@@ -137,7 +137,7 @@ class Category
     }
 
     /**
-     * @return Collection<int, Evaluation>
+     * @return Collection<int, Assessment>
      */
     public function getAssessments(): Collection
     {

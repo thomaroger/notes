@@ -148,25 +148,13 @@
                     </div>
                 </div>
             {% endfor %}
-        {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}
 
 
-{% block javascripts %}{{ parent() }}
-<script>document.querySelectorAll('button[data-bs-toggle="collapse"]').forEach(button => {
-const targetId = button.getAttribute('data-bs-target');
-const targetRow = document.querySelector(targetId);
-const tableRow = button.closest('tr');
-
-});
-
-document.querySelectorAll('.accordion-trigger').forEach(btn => {
-btn.addEventListener('click', () => {
-document.querySelectorAll('.collapse.show').forEach(el => {
-new bootstrap.Collapse(el, {toggle: false}).hide();
-});
-});
-});
-</script>
+{% block javascripts %}
+{{ parent() }}
 {% endblock %}

@@ -27,83 +27,181 @@
 				</form>
 			</div>
 		</div>
-		{% for theme, assessments in groupedByTheme %}
+		{% for theme in groupedByTheme %}
+			{% set themeTotalScore = 0 %}
+			{% set themeTotalMax = 0 %}
 			<div class="card shadow-sm mb-4">
 				<div class="card-header bg-secondary text-white">
-					<h3 class="mb-0">{{ theme }}</h3>
+					<h3 class="mb-0">{{ theme.theme }}</h3>
 				</div>
 				<div class="card-body p-0">
-					<div class="table-responsive">
-						<table class="table table-striped table-hover text-center mb-0">
-							<thead class="table-dark">
-								<tr>
-									<th>Titre</th>
-									<th>Note</th>
-									<th>% Réussite</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% set totalScore = 0 %}
-								{% set totalMax = 0 %}
-								{% for assessment in assessments|sort((a, b) => a.date <=> b.date) %}
-									{% set scoreObj = child.scores|filter(s => s.assessment.id == assessment.id)|first %}
-									{% set scoreValue = scoreObj ? scoreObj.score : null %}
-									{% set absent = scoreObj and scoreObj.absent ?? false %}
-									{% set percentage = scoreValue is not null ? (scoreValue / assessment.maxScore) * 100 : 0 %}
-									{% set rowClass = '' %}
-									{% if absent %}
-										{% set rowClass = 'table-warning' %}
-									{% elseif percentage < 40 %}
-										{% set rowClass = 'table-danger' %}
-									{% elseif percentage <= 75 %}
-										{% set rowClass = 'table-warning' %}
-									{% else %}
-										{% set rowClass = 'table-success' %}
-									{% endif %}
-									<tr class="{{ rowClass }}">
-										<td>
-											<a href="{{ path('score_edit', {'assessment': assessment.id}) }}">{{ assessment.title }}
-												-
-												{{ assessment.date|date('d/m/Y') }}</a>
-										</td>
-										<td>
-											{% if absent %}
-												Absent
-											{% else %}
-												{{ scoreValue }}
-												/
-												{{ assessment.maxScore }}
-											{% endif %}
-										</td>
-										<td>
-											{% if not absent %}
-												{{ percentage|number_format(0) }}%{% else %}-
-											{% endif %}
-										</td>
-									</tr>
-									{% if not absent %}
-										{% set totalScore = totalScore + scoreValue %}
-										{% set totalMax = totalMax + assessment.maxScore %}
-									{% endif %}
+					{% for parentCategories in theme.categories %}
+						{% set parentCategoryTotalScore = 0 %}
+						{% set parentCategoryTotalMax = 0 %}
+						<div class="card shadow-sm mb-4">
+							<div class="card-header bg-secondary text-white">
+								<h3 class="mb-0">{{ parentCategories.category }}</h3>
+							</div>
+							<div class="card-body p-0">
+								{% for category in parentCategories.categories %}
+									{% set categoryTotalScore = 0 %}
+									{% set categoryTotalMax = 0 %}
+									<div class="card shadow-sm mb-4">
+										<div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+											<h3 class="mb-0">{{ category.category }}</h3>
+											<button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-category-{{ category.category.id }}" aria-expanded="false" aria-controls="stats-category-{{ category.category.id }}">
+												<i class="fas fa-chart-bar me-1"></i>
+												Evaluations
+											</button>
+
+										</div>
+										<div class="card-body p-0">
+											<div class="table-responsive collapse" id="stats-category-{{ category.category.id }}">
+												<table class="table table-striped table-hover text-center mb-0">
+													<thead class="table-dark">
+														<tr>
+															<th>Titre</th>
+															<th>Note</th>
+															<th>% Réussite</th>
+														</tr>
+													</thead>
+													<tbody>
+														{% for assessment in category.assessments %}
+															{% set scoreObj = child.scores|filter(s => s.assessment.id == assessment.id)|first %}
+															{% set scoreValue = scoreObj ? scoreObj.score : null %}
+															{% set absent = scoreObj and scoreObj.absent ?? false %}
+															{% set percentage = scoreValue is not null ? (scoreValue / assessment.maxScore) * 100 : 0 %}
+															{% set rowClass = '' %}
+															{% if absent %}
+																{% set rowClass = 'table-warning' %}
+															{% elseif percentage < 40 %}
+																{% set rowClass = 'table-danger' %}
+															{% elseif percentage <= 75 %}
+																{% set rowClass = 'table-warning' %}
+															{% else %}
+																{% set rowClass = 'table-success' %}
+															{% endif %}
+															<tr class="{{ rowClass }}">
+																<td>
+																	<a href="{{ path('score_edit', {'assessment': assessment.id}) }}">{{ assessment.title }}
+																		-
+																		{{ assessment.date|date('d/m/Y') }}</a>
+																</td>
+																<td>
+																	{% if absent %}
+																		Absent
+																	{% else %}
+																		{{ scoreValue }}
+																		/
+																		{{ assessment.maxScore }}
+																	{% endif %}
+																</td>
+																<td>
+																	{% if not absent %}
+																		{{ percentage|number_format(0) }}%
+																	{% else %}
+																		-
+																	{% endif %}
+																</td>
+															</tr>
+															{% if not absent %}
+																{% set categoryTotalScore = categoryTotalScore + scoreValue %}
+																{% set categoryTotalMax = categoryTotalMax + assessment.maxScore %}
+																{% set parentCategoryTotalScore = parentCategoryTotalScore + scoreValue %}
+																{% set parentCategoryTotalMax = parentCategoryTotalMax + assessment.maxScore %}
+																{% set themeTotalScore = themeTotalScore + scoreValue %}
+																{% set themeTotalMax = themeTotalMax + assessment.maxScore %}
+															{% endif %}
+														{% endfor %}
+													</tbody>
+												</table>
+
+											</div>
+											<table class="table table-striped table-hover text-center mb-0">
+												<tbody>
+
+													{% if categoryTotalMax == 0 %}
+														{% set rowClass = 'table-warning' %}
+													{% elseif ((categoryTotalScore / categoryTotalMax) * 100) < 40 %}
+														{% set rowClass = 'table-danger' %}
+													{% elseif ((categoryTotalScore / categoryTotalMax) * 100) <= 75 %}
+														{% set rowClass = 'table-warning' %}
+													{% else %}
+														{% set rowClass = 'table-success' %}
+													{% endif %}
+
+													<tr class="fw-bold {{rowClass}}">
+														<td colspan="2" class="text-start">Pourcentage
+															{{ category.category }}
+														</td>
+														<td class="text-end">
+															{% if categoryTotalMax > 0 %}
+																{{ ((categoryTotalScore / categoryTotalMax) * 100)|number_format(0) }}%
+															{% else %}
+																-
+															{% endif %}
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
 								{% endfor %}
-								{# Ligne pour le pourcentage global du thème #}
-								<tr class="fw-bold">
-									<td colspan="2">Pourcentage global
-										{{ theme }}
-									</td>
-									<td>
-										{% if totalMax > 0 %}
-											{{ ((totalScore / totalMax) * 100)|number_format(0) }}%
+								<table class="table table-striped table-hover text-center mb-0">
+									<tbody>
+										{% if parentCategoryTotalMax == 0 %}
+											{% set rowClass = 'table-warning' %}
+										{% elseif ((parentCategoryTotalScore / parentCategoryTotalMax) * 100) < 40 %}
+											{% set rowClass = 'table-danger' %}
+										{% elseif ((parentCategoryTotalScore / parentCategoryTotalMax) * 100) <= 75 %}
+											{% set rowClass = 'table-warning' %}
 										{% else %}
-											-
+											{% set rowClass = 'table-success' %}
 										{% endif %}
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+										<tr class="fw-bold {{rowClass}}">
+											<td colspan="2" class="text-start">Pourcentage
+												{{ parentCategories.category }}
+											</td>
+											<td class="text-end">
+												{% if parentCategoryTotalMax > 0 %}
+													{{ ((parentCategoryTotalScore / parentCategoryTotalMax) * 100)|number_format(0) }}%
+												{% else %}
+													-
+												{% endif %}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					{% endfor %}
+					<table class="table table-striped table-hover text-center mb-0">
+						<tbody>
+							{% if themeTotalMax == 0 %}
+								{% set rowClass = 'table-warning' %}
+							{% elseif ((themeTotalScore / themeTotalMax) * 100) < 40 %}
+								{% set rowClass = 'table-danger' %}
+							{% elseif ((themeTotalScore / themeTotalMax) * 100) <= 75 %}
+								{% set rowClass = 'table-warning' %}
+							{% else %}
+								{% set rowClass = 'table-success' %}
+							{% endif %}
+							<tr class="fw-bold {{rowClass}}">
+								<td colspan="2" class="text-start">Pourcentage
+									{{ theme.theme }}
+								</td>
+								<td class="text-end">
+									{% if themeTotalMax > 0 %}
+										{{ ((themeTotalScore / themeTotalMax) * 100)|number_format(0) }}%
+									{% else %}
+										-
+									{% endif %}
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
-		{% endfor %}
-	</div>
+	{% endfor %}
+</div>
 {% endblock %}
