@@ -65,6 +65,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Catégories', 'fa fa-book', Category::class);
         yield MenuItem::section('Statistiques');
         yield MenuItem::linkToCrud('Statistiques', 'fa fa-chart-area', Stat::class);
+        yield MenuItem::linkToUrl('Réinitialiser les statistiques', 'fa fa-trash', '/admin/reset_stat');
         yield MenuItem::section('Sécurité');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
         yield MenuItem::linkToUrl('Frontend', 'fa fa-globe', '/');
