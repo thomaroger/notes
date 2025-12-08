@@ -67,3 +67,8 @@ function showMessage(message, type = 'info') {
     bsToast.show();
   }
 }
+
+
+$(document).ready(function() {
+    $('.form-select-category').select2();
+});
