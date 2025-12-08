@@ -30,8 +30,10 @@ class AssessmentType extends AbstractType
                 'label' => 'Catégorie',
                 'query_builder' => function (\Doctrine\ORM\EntityRepository $er) {
                     return $er->createQueryBuilder('c')
+                        ->leftJoin('c.parent', 'p')
                         ->where('c.parent IS NOT NULL')
-                        ->orderBy('c.name', 'ASC');
+                        ->orderBy('p.name', 'ASC')
+                        ->addOrderBy('c.name', 'ASC');
                 },
             ])
             ->add('maxScore', IntegerType::class, [
