@@ -1,118 +1,114 @@
 <td colspan="5">
-	<div
-		class="container py-2">
-		{# 1ère ligne : Élèves notés / Élèves absents #}
-		<div class="row g-3 mb-3">
-			<div class="col-md-6 text-start">
-				<label>Élèves notés :
-					{{ assessment.stats.present }}/{{ assessment.stats.total }}</label>
-				<div class="progress">
-					<div class="progress-bar bg-success" style="width: {{ (assessment.stats.present/assessment.stats.total)*100 }}%"></div>
-				</div>
-			</div>
-			<div class="col-md-6 text-start">
-				<label>Élèves absents :
-					{{ assessment.stats.absent }}/{{ assessment.stats.total }}</label>
-				<div class="progress">
-					<div class="progress-bar bg-warning" style="width: {{ (assessment.stats.absent/assessment.stats.total)*100 }}%"></div>
-				</div>
-			</div>
-		</div>
-		<hr/>
-		{# 2ème ligne : Min / Max / Moyenne #}
-		<div class="row g-3 mb-3">
-			<div class="col-md-4 text-start">
-				<label>Note min :
-					{{ assessment.stats.min }}/{{ assessment.maxScore }}</label>
-				<div class="progress">
-					<div class="progress-bar bg-danger" style="width: {{ (assessment.stats.min/assessment.maxScore)*100 }}%"></div>
-				</div>
-			</div>
-			<div class="col-md-4 text-start">
-				<label>Note max :
-					{{ assessment.stats.max }}/{{ assessment.maxScore }}</label>
-				<div class="progress">
-					<div class="progress-bar bg-success" style="width: {{ (assessment.stats.max/assessment.maxScore)*100 }}%"></div>
-				</div>
-			</div>
-			<div class="col-md-4 text-start">
-				<label>Moyenne :
-					{{ assessment.stats.avg|number_format(2) }}/{{ assessment.maxScore }}</label>
-				<div class="progress">
-					<div class="progress-bar bg-info" style="width: {{ (assessment.stats.avg/assessment.maxScore)*100 }}%"></div>
-				</div>
-			</div>
-		</div>
-		<hr/>
-		{# 3ème ligne : Taux de réussite #}
-		<div class="row g-3">
-			<div class="col-md-4 text-start">
-				<label>Moins de 40% de réussite :
-					{{ assessment.stats.less40 }}
-					élèves</label>
-				<div class="progress">
-					<div class="progress-bar bg-danger" style="width: {{ (assessment.stats.less40/assessment.stats.total)*100 }}%"></div>
-				</div>
-			</div>
-			<div class="col-md-4 text-start">
-				<label>41%-75% de réussite :
-					{{ assessment.stats.between41_75 }}
-					élèves</label>
-				<div class="progress">
-					<div class="progress-bar bg-warning" style="width: {{ (assessment.stats.between41_75/assessment.stats.total)*100 }}%"></div>
-				</div>
-			</div>
-			<div class="col-md-4 text-start">
-				<label>Plus de 75% de réussite :
-					{{ assessment.stats.more75 }}
-					élèves</label>
-				<div class="progress">
-					<div class="progress-bar bg-success" style="width: {{ (assessment.stats.more75/assessment.stats.total)*100 }}%"></div>
-				</div>
-			</div>
-		</div>
-		<hr/>
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Élève</th>
-					<th>Note</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for score in assessment.scores %}
-					{% if score.absent %}
-						{% set rowClass = 'table-warning' %}
-					{% elseif score.score is null %}
-						{% set rowClass = 'table-danger' %}
-					{% else %}
-						{% set percentage = (score.score / assessment.maxScore) * 100 %}
-						{% if percentage < 40 %}
-							{% set rowClass = 'table-danger' %}
-						{% elseif percentage <= 75 %}
-							{% set rowClass = 'table-warning' %}
-						{% else %}
-							{% set rowClass = 'table-success' %}
-						{% endif %}
-					{% endif %}
-					<tr class="{{ rowClass }}">
-						<td>{{ score.child.firstName }}
-							{{ score.child.lastName }}
-						</td>
-						<td>
-							{% if score.absent %}
-								Absent
-							{% elseif score.score is null %}
-								—
-							{% else %}
-								{{ score.score }}
-								/
-								{{ assessment.maxScore }}
-							{% endif %}
-						</td>
-					{% endfor %}
-				</tbody>
-			</tbody>
-		</table>
-	</div>
+    <div class="container py-2">
+        <div class="row g-3 mb-3">
+            <div class="col-md-6 text-start">
+                <label>Élèves notés :
+                    {{ assessment.stats.present }}/{{ assessment.stats.total }}</label>
+                <div class="progress">
+                    <div class="progress-bar bg-success" style="width: {{ (assessment.stats.present/assessment.stats.total)*100 }}%"></div>
+                </div>
+            </div>
+            <div class="col-md-6 text-start">
+                <label>Élèves absents :
+                    {{ assessment.stats.absent }}/{{ assessment.stats.total }}</label>
+                <div class="progress">
+                    <div class="progress-bar bg-warning" style="width: {{ (assessment.stats.absent/assessment.stats.total)*100 }}%"></div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row g-3 mb-3">
+            <div class="col-md-4 text-start">
+                <label>Note min :
+                    {{ assessment.stats.min }}/{{ assessment.maxScore }}</label>
+                <div class="progress">
+                    <div class="progress-bar bg-danger" style="width: {{ (assessment.stats.min/assessment.maxScore)*100 }}%"></div>
+                </div>
+            </div>
+            <div class="col-md-4 text-start">
+                <label>Note max :
+                    {{ assessment.stats.max }}/{{ assessment.maxScore }}</label>
+                <div class="progress">
+                    <div class="progress-bar bg-success" style="width: {{ (assessment.stats.max/assessment.maxScore)*100 }}%"></div>
+                </div>
+            </div>
+            <div class="col-md-4 text-start">
+                <label>Moyenne :
+                    {{ assessment.stats.avg|number_format(2) }}/{{ assessment.maxScore }}</label>
+                <div class="progress">
+                    <div class="progress-bar bg-info" style="width: {{ (assessment.stats.avg/assessment.maxScore)*100 }}%"></div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row g-3">
+            <div class="col-md-4 text-start">
+                <label>Moins de 40% de réussite :
+                    {{ assessment.stats.less40 }}
+                    élèves</label>
+                <div class="progress">
+                    <div class="progress-bar bg-danger" style="width: {{ (assessment.stats.less40/assessment.stats.total)*100 }}%"></div>
+                </div>
+            </div>
+            <div class="col-md-4 text-start">
+                <label>41%-75% de réussite :
+                    {{ assessment.stats.between41_75 }}
+                    élèves</label>
+                <div class="progress">
+                    <div class="progress-bar bg-warning" style="width: {{ (assessment.stats.between41_75/assessment.stats.total)*100 }}%"></div>
+                </div>
+            </div>
+            <div class="col-md-4 text-start">
+                <label>Plus de 75% de réussite :
+                    {{ assessment.stats.more75 }}
+                    élèves</label>
+                <div class="progress">
+                    <div class="progress-bar bg-success" style="width: {{ (assessment.stats.more75/assessment.stats.total)*100 }}%"></div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Élève</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in assessment.scores %}
+                    {% if score.absent %}
+                        {% set rowClass = 'table-warning' %}
+                    {% elseif score.score is null %}
+                        {% set rowClass = 'table-danger' %}
+                    {% else %}
+                        {% set percentage = (score.score / assessment.maxScore) * 100 %}
+                        {% if percentage < 40 %}
+                            {% set rowClass = 'table-danger' %}
+                        {% elseif percentage <= 75 %}
+                            {% set rowClass = 'table-warning' %}
+                        {% else %}
+                            {% set rowClass = 'table-success' %}
+                        {% endif %}
+                    {% endif %}
+                    <tr class="{{ rowClass }}">
+                        <td>{{ score.child.firstName }}
+                            {{ score.child.lastName }}
+                        </td>
+                        <td>
+                            {% if score.absent %}
+                                Absent
+                            {% elseif score.score is null %}
+                                —
+                            {% else %}
+                                {{ score.score }}
+                                /
+                                {{ assessment.maxScore }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tbody>
+            </tbody>
+        </table>
+    </div>
 </td>

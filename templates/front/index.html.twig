@@ -33,121 +33,119 @@
             Créer une évaluation
         </a>
     </div>
-
-{% for theme, categories in groupedByTheme %}
-    <div class="card">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">{{ categories.theme.name }}</h4>
-
-            <button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-theme-{{ theme }}" aria-expanded="false" aria-controls="stats-theme-{{ theme }}">
-                <i class="fas fa-chart-bar me-1"></i>
-                Stats
-            </button>
-        </div>
-
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover text-center mb-0">
-                    <tbody>
-                        <tr class="collapse bg-light" id="stats-theme-{{theme}}">
-                            {{ include('front/partials/_category_stats.html.twig', {partial_category: categories.theme}) }}
-                        </tr>
-                    </tbody>
-                </table>
+    {% for theme, categories in groupedByTheme %}
+        <div class="card">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">{{ categories.theme.name }}</h4>
+                <button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-theme-{{ theme }}" aria-expanded="false" aria-controls="stats-theme-{{ theme }}">
+                    <i class="fas fa-chart-bar me-1"></i>
+                    Stats
+                </button>
             </div>
-            {% for parentcategory, subCategories in categories.categories %}
-                <div class="card">
-                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">{{ categories.theme.name }} - {{ subCategories.category.name }}</h4>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover text-center mb-0">
+                        <tbody>
+                            <tr class="collapse bg-light" id="stats-theme-{{theme}}">
+                                {{ include('front/partials/_category_stats.html.twig', {partial_category: categories.theme}) }}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% for parentcategory, subCategories in categories.categories %}
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">{{ categories.theme.name }}
+                                -
+                                {{ subCategories.category.name }}</h4>
                             <button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-cat-{{ subCategories.category.id }}" aria-expanded="false" aria-controls="stats-cat-{{ subCategories.category.id }}">
-                            <i class="fas fa-chart-bar me-1"></i>
-                            Stats
-                        </button>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover text-center mb-0">
-                                <tbody>
-                                    <tr class="collapse bg-light" id="stats-cat-{{ subCategories.category.id }}">
-                                        {{ include('front/partials/_category_stats.html.twig', {partial_category: subCategories.category}) }}
-                                    </tr>
-                                </tbody>
-                            </table>
+                                <i class="fas fa-chart-bar me-1"></i>
+                                Stats
+                            </button>
                         </div>
-
-                    {% for assessments in subCategories.categories %}
-
-                            <div class="card shadow-sm mb-4">
-                                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                                <h4 class="mb-0">{{ categories.theme.name }} - {{ assessments.category.name }}</h4>
-
-                                    <button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-cat-{{ assessments.category.id }}" aria-expanded="false" aria-controls="stats-cat-{{ assessments.category.id }}">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Stats
-                                    </button>
-                                </div>
-                                <div class="card-body p-0">
-                                    <table class="table table-striped table-hover text-center mb-0">
-                                        <tbody>
-                                            <tr class="collapse bg-light" id="stats-cat-{{ assessments.category.id }}">
-                                                {{ include('front/partials/_category_stats.html.twig', {partial_category: assessments.category}) }}
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div class="table-responsive">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover text-center mb-0">
+                                    <tbody>
+                                        <tr class="collapse bg-light" id="stats-cat-{{ subCategories.category.id }}">
+                                            {{ include('front/partials/_category_stats.html.twig', {partial_category: subCategories.category}) }}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% for assessments in subCategories.categories %}
+                                <div class="card shadow-sm mb-4">
+                                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                                        <h4 class="mb-0">{{ categories.theme.name }}
+                                            -
+                                            {{ assessments.category.name }}</h4>
+                                        <button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-cat-{{ assessments.category.id }}" aria-expanded="false" aria-controls="stats-cat-{{ assessments.category.id }}">
+                                            <i class="fas fa-chart-bar me-1"></i>
+                                            Stats
+                                        </button>
+                                    </div>
+                                    <div class="card-body p-0">
                                         <table class="table table-striped table-hover text-center mb-0">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>Titre</th>
-                                                    <th>Classe</th>
-                                                    <th>Note max</th>
-                                                    <th>Date</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
                                             <tbody>
-                                                {% for assessment in assessments.assessments %}
-                                                    {% set classStyle = 'danger' %}
-                                                    {% set totalEffective = assessment.stats.present + assessment.stats.absent %}
-                                                    {% if assessment.stats.present + assessment.stats.absent != assessment.stats.total  %}
-                                                        {% set classStyle = 'danger' %}
-                                                    {% elseif assessment.stats.absent > 0 %}
-                                                        {% set classStyle = 'warning' %}
-                                                    {% else %}
-                                                        {% set classStyle = 'success' %}
-                                                    {% endif %}
-                                                    <tr class="table-{{classStyle}}">
-                                                        <td class="fw-bold">{{ assessment.title }}
-                                                        </td>
-                                                        <td>
-                                                            {{ assessment.schoolClass.level }}
-                                                        </td>
-                                                        <td>{{ assessment.maxScore }}</td>
-                                                        <td>{{ assessment.date|date('d/m/Y') }}</td>
-                                                        <td class="text-end">
-                                                            <button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-{{ assessment.id }}" aria-expanded="false" aria-controls="stats-{{ assessment.id }}">
-                                                                <i class="fas fa-chart-bar me-1"></i>
-                                                                Stats
-                                                            </button>
-                                                            <a href="{{ path('score_edit', {'assessment': assessment.id}) }}" class="btn btn-success btn-sm">
-                                                                <i class="fas fa-pen me-1"></i>
-                                                                Saisir notes
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                    <tr class="collapse bg-light" id="stats-{{ assessment.id }}">
-                                                        {{ include('front/partials/_assessment_stats.html.twig', {assessment: assessment}) }}
-                                                    </tr>
-                                                {% endfor %}
+                                                <tr class="collapse bg-light" id="stats-cat-{{ assessments.category.id }}">
+                                                    {{ include('front/partials/_category_stats.html.twig', {partial_category: assessments.category}) }}
+                                                </tr>
                                             </tbody>
                                         </table>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover text-center mb-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>Titre</th>
+                                                        <th>Classe</th>
+                                                        <th>Note max</th>
+                                                        <th>Date</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for assessment in assessments.assessments %}
+                                                        {% set classStyle = 'danger' %}
+                                                        {% set totalEffective = assessment.stats.present + assessment.stats.absent %}
+                                                        {% if assessment.stats.present + assessment.stats.absent != assessment.stats.total  %}
+                                                            {% set classStyle = 'danger' %}
+                                                        {% elseif assessment.stats.absent > 0 %}
+                                                            {% set classStyle = 'warning' %}
+                                                        {% else %}
+                                                            {% set classStyle = 'success' %}
+                                                        {% endif %}
+                                                        <tr class="table-{{classStyle}}">
+                                                            <td class="fw-bold">{{ assessment.title }}
+                                                            </td>
+                                                            <td>
+                                                                {{ assessment.schoolClass.level }}
+                                                            </td>
+                                                            <td>{{ assessment.maxScore }}</td>
+                                                            <td>{{ assessment.date|date('d/m/Y') }}</td>
+                                                            <td class="text-end">
+                                                                <button class="btn btn-info btn-sm accordion-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#stats-{{ assessment.id }}" aria-expanded="false" aria-controls="stats-{{ assessment.id }}">
+                                                                    <i class="fas fa-chart-bar me-1"></i>
+                                                                    Stats
+                                                                </button>
+                                                                <a href="{{ path('score_edit', {'assessment': assessment.id}) }}" class="btn btn-success btn-sm">
+                                                                    <i class="fas fa-pen me-1"></i>
+                                                                    Saisir notes
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="collapse bg-light" id="stats-{{ assessment.id }}">
+                                                            {{ include('front/partials/_assessment_stats.html.twig', {assessment: assessment}) }}
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
             </div>
         </div>
     {% endfor %}

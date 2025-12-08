@@ -3,279 +3,280 @@
 {% block title %}Saisie des notes
 {% endblock %}
 {% block stylesheets %}
-	{{ parent() }}
-	<style>
-		.table-responsive {
-			overflow-x: auto;
-		}
-		.score-feedback {
-			display: flex;
-			align-items: center;
-			gap: 0.3rem;
-			opacity: 0;
-			transition: opacity 0.3s ease;
-		}
-		.score-feedback.show {
-			opacity: 1;
-		}
-		.score-feedback i.valid {
-			color: green;
-		}
-		.score-feedback i.error {
-			color: red;
-		}
-		.score-feedback i.saving {
-			color: gray;
-		}
-		@media(max-width: 576px) {
-			.score-input {
-				width: 100%;
-			}
-		}
-	</style>
+    {{ parent() }}
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .score-feedback {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .score-feedback.show {
+            opacity: 1;
+        }
+        .score-feedback i.valid {
+            color: green;
+        }
+        .score-feedback i.error {
+            color: red;
+        }
+        .score-feedback i.saving {
+            color: gray;
+        }
+        @media(max-width: 576px) {
+            .score-input {
+                width: 100%;
+            }
+        }
+    </style>
 {% endblock %}
 {% block body %}
-	<div class="container mt-4">
-		<div class="card shadow-sm mb-4">
-			<div class="card-header bg-primary text-white">
-				<h3 class="mb-0">
-					<i class="fas fa-clipboard-list"></i>
-					{{ assessment.title }}
-				</h3>
-			</div>
-			<div class="card-body row">
-				<div class="col-md-12 text-center">
-					<strong>Classe :</strong>
-					{{ assessment.schoolClass.year }}
-					{{ assessment.schoolClass.level }}
-				</div>
-				<div class="clearfix">&nbsp;</div>
-				<div class="col-md-4 text-center">
-					<strong>Thème :</strong>
-					{{ assessment.category.parent.theme.name }}
-				</div>
-				<div class="col-md-4 text-center">
-					<strong>Catégorie :</strong>
-					{{ assessment.category.parent.name }}
-				</div>
-				<div class="col-md-4 text-center">
-					<strong>Sous Categorie :</strong>
-					{{ assessment.category.name }}
-				</div>
-				<div class="clearfix">&nbsp;</div>
-				<div class="col-md-6 text-center">
-					<strong>Note max :</strong>
-					{{ assessment.maxScore }}
-				</div>
-				<div class="col-md-6 text-center">
-					<strong>Date :</strong>
-					{{ assessment.date|date('d/m/Y') }}
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="table-responsive">
-		<table class="table table-striped text-center">
-			<thead>
-				<tr>
-					<th>Prénom</th>
-					<th>Nom</th>
-					<th>Note</th>
-					<th style="width:10%;">Absent</th>
-					<th style="width:30%;"></th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for child in children %}
-					{% set childScore = child.scores|filter(s => s.assessment.id == assessment.id)|first %}
-					{% set rowClass = '' %}
-					{% if childScore and childScore.score is not null %}
-						{% set rowClass = 'table-success' %}
-					{% elseif childScore and childScore.absent ?? false %}
-						{% set rowClass = 'table-warning' %}
-					{% else %}
-						{% set rowClass = 'table-danger' %}
-					{% endif %}
-					<tr class="{{ rowClass }}">
-						<td>{{ child.firstName }}</td>
-						<td>{{ child.lastName }}</td>
-						<td>
-							<input type="number" class="form-control score-input" data-child="{{ child.id }}" data-assessment="{{ assessment.id }}" min="0" max="{{ assessment.maxScore }}" value="{{ childScore ? childScore.score : '' }}" {% if childScore is null and child.absent ?? false %} disabled {% endif %}>
-						</td>
-						<td class="text-center" style="width:10%;">
-							<input type="checkbox" class="absent-checkbox" data-child="{{ child.id }}" data-assessment="{{ assessment.id }}" {% if childScore and childScore.absent ?? false %} checked {% endif %}>
-						</td>
-						<td style="width:30%;">
-							<div class="score-feedback">
-								<i class="fas fa-circle saving"></i>
-								<span class="feedback-text"></span>
-							</div>
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		<div class="clearfix">&nbsp;</div>
-		<div class="mt-4 text-end">
-			<a id="btn-home" href="{{ path('app_home') }}" class="btn btn-primary disabled">
-				<i class="fas fa-home"></i>
-				Retour à l'accueil
-			</a>
-		</div>
-	</div>
+<div class="container mt-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                <i class="fas fa-clipboard-list"></i>
+                {{ assessment.title }}
+            </h3>
+        </div>
+        <div class="card-body row">
+            <div class="col-md-12 text-center">
+                <strong>Classe :</strong>
+                {{ assessment.schoolClass.year }}
+                {{ assessment.schoolClass.level }}
+            </div>
+            <div class="clearfix">&nbsp;</div>
+            <div class="col-md-4 text-center">
+                <strong>Thème :</strong>
+                {{ assessment.category.parent.theme.name }}
+            </div>
+            <div class="col-md-4 text-center">
+                <strong>Catégorie :</strong>
+                {{ assessment.category.parent.name }}
+            </div>
+            <div class="col-md-4 text-center">
+                <strong>Sous Categorie :</strong>
+                {{ assessment.category.name }}
+            </div>
+            <div class="clearfix">&nbsp;</div>
+            <div class="col-md-6 text-center">
+                <strong>Note max :</strong>
+                {{ assessment.maxScore }}
+            </div>
+            <div class="col-md-6 text-center">
+                <strong>Date :</strong>
+                {{ assessment.date|date('d/m/Y') }}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped text-center">
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Note</th>
+                <th style="width:10%;">Absent</th>
+                <th style="width:30%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for child in children %}
+                {% set childScore = child.scores|filter(s => s.assessment.id == assessment.id)|first %}
+                {% set rowClass = '' %}
+                {% if childScore and childScore.score is not null %}
+                    {% set rowClass = 'table-success' %}
+                {% elseif childScore and childScore.absent ?? false %}
+                    {% set rowClass = 'table-warning' %}
+                {% else %}
+                    {% set rowClass = 'table-danger' %}
+                {% endif %}
+                <tr class="{{ rowClass }}">
+                    <td>{{ child.firstName }}</td>
+                    <td>{{ child.lastName }}</td>
+                    <td>
+                        <input type="number" class="form-control score-input" data-child="{{ child.id }}" data-assessment="{{ assessment.id }}" min="0" max="{{ assessment.maxScore }}" value="{{ childScore ? childScore.score : '' }}" {% if childScore is null and child.absent ?? false %} disabled {% endif %}>
+                    </td>
+                    <td class="text-center" style="width:10%;">
+                        <input type="checkbox" class="absent-checkbox" data-child="{{ child.id }}" data-assessment="{{ assessment.id }}" {% if childScore and childScore.absent ?? false %} checked {% endif %}>
+                    </td>
+                    <td style="width:30%;">
+                        <div class="score-feedback">
+                            <i class="fas fa-circle saving"></i>
+                            <span class="feedback-text"></span>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="clearfix">&nbsp;</div>
+    <div class="mt-4 text-end">
+        <a id="btn-home" href="{{ path('app_home') }}" class="btn btn-primary disabled">
+            <i class="fas fa-home"></i>
+            Retour à l'accueil
+        </a>
+    </div>
+</div>
+
 {% endblock %}
 {% block javascripts %}
-	{{ parent() }}
-	<script>
-		function updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, scoreValue, maxScore, isAbsent, errorMessage = null) { // Supprime les classes existantes
-row.classList.remove('table-success', 'table-warning', 'table-danger');
-feedbackContainer.classList.remove('table-success', 'table-warning', 'table-danger', 'show');
+{{ parent() }}
+<script>
+        function updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, scoreValue, maxScore, isAbsent, errorMessage = null) { // Supprime les classes existantes
+            row.classList.remove('table-success', 'table-warning', 'table-danger');
+            feedbackContainer.classList.remove('table-success', 'table-warning', 'table-danger', 'show');
 
-if (isAbsent) {
-row.classList.add('table-warning');
-feedbackContainer.classList.add('table-warning');
-feedbackIcon.className = 'fas fa-circle';
-feedbackText.textContent = 'Absent';
-} else if (!isNaN(scoreValue) && scoreValue !== null && scoreValue !== '') {
-row.classList.add('table-success');
-feedbackContainer.classList.add('table-success');
-feedbackIcon.className = 'fas fa-check';
-feedbackText.textContent = 'Enregistré';
-} else {
-row.classList.add('table-danger');
-feedbackContainer.classList.add('table-danger');
-feedbackIcon.className = 'fas fa-times';
-feedbackText.textContent = errorMessage || 'Pas de note';
-}
+            if (isAbsent) {
+                row.classList.add('table-warning');
+                feedbackContainer.classList.add('table-warning');
+                feedbackIcon.className = 'fas fa-circle';
+                feedbackText.textContent = 'Absent';
+            } else if (!isNaN(scoreValue) && scoreValue !== null && scoreValue !== '') {
+                row.classList.add('table-success');
+                feedbackContainer.classList.add('table-success');
+                feedbackIcon.className = 'fas fa-check';
+                feedbackText.textContent = 'Enregistré';
+            } else {
+                row.classList.add('table-danger');
+                feedbackContainer.classList.add('table-danger');
+                feedbackIcon.className = 'fas fa-times';
+                feedbackText.textContent = errorMessage || 'Pas de note';
+            }
 
-// Affiche le feedback temporairement
-feedbackContainer.classList.add('show');
-setTimeout(() => feedbackContainer.classList.remove('show'), 1200);
-}
+            // Affiche le feedback temporairement
+            feedbackContainer.classList.add('show');
+            setTimeout(() => feedbackContainer.classList.remove('show'), 1200);
+        }
 
-// Gestion de la saisie des notes
-document.querySelectorAll('.score-input').forEach(input => {
-let timer = null;
-const row = input.closest('tr');
-const feedbackContainer = row.querySelector('.score-feedback');
-const feedbackText = feedbackContainer.querySelector('.feedback-text');
-const feedbackIcon = feedbackContainer.querySelector('i');
+        // Gestion de la saisie des notes
+        document.querySelectorAll('.score-input').forEach(input => {
+            let timer = null;
+            const row = input.closest('tr');
+            const feedbackContainer = row.querySelector('.score-feedback');
+            const feedbackText = feedbackContainer.querySelector('.feedback-text');
+            const feedbackIcon = feedbackContainer.querySelector('i');
 
-input.addEventListener('input', function () {
-const value = parseFloat(this.value);
-const min = parseFloat(this.min);
-const max = parseFloat(this.max);
+            input.addEventListener('input', function() {
+                const value = parseFloat(this.value);
+                const min = parseFloat(this.min);
+                const max = parseFloat(this.max);
 
-if (isNaN(value) || value < min || value > max) {
-updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, max, false, `La note doit être entre ${min} et ${max}`);
-return;
-}
+                if (isNaN(value) || value < min || value > max) {
+                    updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, max, false, `La note doit être entre ${min} et ${max}`);
+                    return;
+                }
 
-feedbackIcon.className = 'fas fa-circle'; // sauvegarde en cours
-feedbackText.textContent = 'Enregistrement...';
-feedbackContainer.classList.add('show');
+                feedbackIcon.className = 'fas fa-circle'; // sauvegarde en cours
+                feedbackText.textContent = 'Enregistrement...';
+                feedbackContainer.classList.add('show');
 
-clearTimeout(timer);
-timer = setTimeout(() => {
-fetch('{{ path("score_update") }}', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/x-www-form-urlencoded',
-'X-Requested-With': 'XMLHttpRequest'
-},
-body: `childId=${
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    fetch('{{ path("score_update") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: `childId=${
 this.dataset.child
 }&assessmentId=${
 this.dataset.assessment
 }&score=${value}`
-}).then(res => res.json()).then(data => {
-if (data.status === 'success') {
-updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, value, max, false);
-} else {
-updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, max, false, data.message || 'Erreur');
-}
-}).catch(() => {
-updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, max, false, 'Erreur réseau');
-});
-}, 500);
-});
-});
+                    }).then(res => res.json()).then(data => {
+                        if (data.status === 'success') {
+                            updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, value, max, false);
+                        } else {
+                            updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, max, false, data.message || 'Erreur');
+                        }
+                    }).catch(() => {
+                        updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, max, false, 'Erreur réseau');
+                    });
+                }, 500);
+            });
+        });
 
-// Gestion de la checkbox Absent
-document.querySelectorAll('.absent-checkbox').forEach(checkbox => {
-checkbox.addEventListener('change', function () {
-const row = this.closest('tr');
-const scoreInput = row.querySelector('.score-input');
-const feedbackContainer = row.querySelector('.score-feedback');
-const feedbackText = feedbackContainer.querySelector('.feedback-text');
-const feedbackIcon = feedbackContainer.querySelector('i');
+        // Gestion de la checkbox Absent
+        document.querySelectorAll('.absent-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('tr');
+                const scoreInput = row.querySelector('.score-input');
+                const feedbackContainer = row.querySelector('.score-feedback');
+                const feedbackText = feedbackContainer.querySelector('.feedback-text');
+                const feedbackIcon = feedbackContainer.querySelector('i');
 
-const isAbsent = this.checked;
-scoreInput.disabled = isAbsent;
-if (isAbsent) 
-scoreInput.value = '';
+                const isAbsent = this.checked;
+                scoreInput.disabled = isAbsent;
+                if (isAbsent)
+                    scoreInput.value = '';
 
 
-fetch('{{ path("score_update") }}', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/x-www-form-urlencoded',
-'X-Requested-With': 'XMLHttpRequest'
-},
-body: `childId=${
+                fetch('{{ path("score_update") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `childId=${
 this.dataset.child
 }&assessmentId=${
 this.dataset.assessment
 }&absent=${
 isAbsent ? 1 : 0
 }`
-}).then(res => res.json()).then(data => {
-if (data.status === 'success') {
-updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, scoreInput.max, isAbsent);
-} else {
-updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, scoreInput.max, false, data.message || 'Erreur');
-}
-}).catch(() => {
-updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, scoreInput.max, false, 'Erreur réseau');
-});
-});
-});
+                }).then(res => res.json()).then(data => {
+                    if (data.status === 'success') {
+                        updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, scoreInput.max, isAbsent);
+                    } else {
+                        updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, scoreInput.max, false, data.message || 'Erreur');
+                    }
+                }).catch(() => {
+                    updateRowFeedback(row, feedbackContainer, feedbackText, feedbackIcon, null, scoreInput.max, false, 'Erreur réseau');
+                });
+            });
+        });
 
-function updateHomeButtonState() {
-const btn = document.getElementById('btn-home');
-let allValid = true;
+        function updateHomeButtonState() {
+            const btn = document.getElementById('btn-home');
+            let allValid = true;
 
-document.querySelectorAll('tbody tr').forEach(row => {
-const scoreInput = row.querySelector('.score-input');
-const absentCheckbox = row.querySelector('.absent-checkbox');
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const scoreInput = row.querySelector('.score-input');
+                const absentCheckbox = row.querySelector('.absent-checkbox');
 
-const value = parseFloat(scoreInput.value);
-const min = parseFloat(scoreInput.min);
-const max = parseFloat(scoreInput.max);
-const isAbsent = absentCheckbox.checked;
+                const value = parseFloat(scoreInput.value);
+                const min = parseFloat(scoreInput.min);
+                const max = parseFloat(scoreInput.max);
+                const isAbsent = absentCheckbox.checked;
 
-// La ligne est valide si absent OU note entre 0 et max
-if (! isAbsent && (isNaN(value) || value < min || value > max)) {
-allValid = false;
-}
-});
+                // La ligne est valide si absent OU note entre 0 et max
+                if (!isAbsent && (isNaN(value) || value < min || value > max)) {
+                    allValid = false;
+                }
+            });
 
-if (allValid) {
-btn.classList.remove('disabled');
-btn.classList.add('btn-success'); // optionnel pour visuel
-} else {
-btn.classList.add('disabled');
-btn.classList.remove('btn-success');
-}
-}
+            if (allValid) {
+                btn.classList.remove('disabled');
+                btn.classList.add('btn-success'); // optionnel pour visuel
+            } else {
+                btn.classList.add('disabled');
+                btn.classList.remove('btn-success');
+            }
+        }
 
-// Appel initial au chargement pour vérifier les lignes existantes
-updateHomeButtonState();
+        // Appel initial au chargement pour vérifier les lignes existantes
+        updateHomeButtonState();
 
-// Appel à chaque modification de note ou checkbox
-document.querySelectorAll('.score-input, .absent-checkbox').forEach(el => {
-el.addEventListener('input', updateHomeButtonState);
-el.addEventListener('change', updateHomeButtonState);
-});
-	</script>
+        // Appel à chaque modification de note ou checkbox
+        document.querySelectorAll('.score-input, .absent-checkbox').forEach(el => {
+            el.addEventListener('input', updateHomeButtonState);
+            el.addEventListener('change', updateHomeButtonState);
+        });
+</script>
 {% endblock %}

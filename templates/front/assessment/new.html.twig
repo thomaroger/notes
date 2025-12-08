@@ -3,62 +3,61 @@
 {% block title %}Notes - Créer une évaluation
 {% endblock %}
 {% block body %}
-	<div class="container mt-4">
-		<div class="card shadow-sm">
-			<div class="card-header">
-				<h2 class="mb-0">
-					Créer une nouvelle évaluation</h3>
-			</div>
-			<div class="card-body">
-				{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-				<div class="mb-3">
-					{{ form_label(form.title, 'Titre de l\'évaluation') }}
-        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
-        {{ form_errors(form.title) }}
-      </div>
-      <div class="mb-3">
-        {{ form_label(form.category, 'Catégorie') }}
-        {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
-        {{ form_errors(form.category) }}
-      </div>
-      <div class="mb-3">
-        {{ form_label(form.maxScore, 'Note maximale') }}
-        {{ form_widget(form.maxScore, {'attr': {'class': 'form-control', 'min': 1, 'max': 20}}) }}
-        {{ form_errors(form.maxScore) }}
-      </div>
-      <div class="mb-3">
-        {{ form_label(form.date, 'Date de l\'évaluation') }}
-					{{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
-					{{ form_errors(form.date) }}
-				</div>
-				<div class="text-end">
-					<a href="{{ path('app_home') }}" class="btn btn-secondary">
-						<i class="fas fa-arrow-left"></i>
-						Annuler
-					</a>
-					<button type="submit" class="btn btn-success">
-						<i class="fas fa-plus-circle"></i>
-						Créer l’évaluation
-					</button>
-				</div>
-				{{ form_end(form) }}
-			</div>
-		</div>
-	</div>
-	<script>
-		// Exemple simple pour activer la validation Bootstrap
-(function () {
-'use strict'
-const forms = document.querySelectorAll('.needs-validation')
-Array.from(forms).forEach(function (form) {
-form.addEventListener('submit', function (event) {
-if (! form.checkValidity()) {
-event.preventDefault()
-event.stopPropagation()
-}
-form.classList.add('was-validated')
-}, false)
-})
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h2 class="mb-0">
+                Créer une nouvelle évaluation</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+            <div class="mb-3">
+                {{ form_label(form.title, 'Titre de l\'évaluation') }}
+                {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.title) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.category, 'Catégorie') }}
+                {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+                {{ form_errors(form.category) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.maxScore, 'Note maximale') }}
+                {{ form_widget(form.maxScore, {'attr': {'class': 'form-control', 'min': 1, 'max': 20}}) }}
+                {{ form_errors(form.maxScore) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.date, 'Date de l\'évaluation') }}
+                {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.date) }}
+            </div>
+            <div class="text-end">
+                <a href="{{ path('app_home') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Annuler
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus-circle"></i>
+                    Créer l’évaluation
+                </button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+<script>
+(function() {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
 })()
-	</script>
+</script>
 {% endblock %}
