@@ -120,7 +120,7 @@ Projet privé – non redistribuable.
 ---
 
 ##  TODO
-idem pour la partie enfants
+check partie enfants
 Refactoring (Service, Repository)
 Sécurité
-Formattage
+Format

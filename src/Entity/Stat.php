@@ -85,6 +85,11 @@ class Stat
         return $this;
     }
 
+    public function getDataJsonField(): string
+    {
+        return json_encode($this->data);
+    }
+
     public function get(string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
