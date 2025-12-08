@@ -45,7 +45,12 @@ class Category
 
     public function __toString(): string
     {
-        return $this->getParent() ?? '' . ' - ' . $this->name ?? '';
+        if ($this->hasParent()) {
+            return $this->getParent()
+                ->name . ' - ' . $this->name;
+        }
+
+        return $this->name;
     }
 
     public function getId(): ?int
