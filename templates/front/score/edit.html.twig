@@ -44,21 +44,30 @@
 				</h3>
 			</div>
 			<div class="card-body row">
-				<div class="col-md-4 text-center">
+				<div class="col-md-12 text-center">
 					<strong>Classe :</strong>
 					{{ assessment.schoolClass.year }}
 					{{ assessment.schoolClass.level }}
 				</div>
+				<div class="clearfix">&nbsp;</div>
 				<div class="col-md-4 text-center">
 					<strong>Thème :</strong>
-					{{ assessment.theme.name }}
+					{{ assessment.category.parent.theme.name }}
 				</div>
 				<div class="col-md-4 text-center">
+					<strong>Catégorie :</strong>
+					{{ assessment.category.parent.name }}
+				</div>
+				<div class="col-md-4 text-center">
+					<strong>Sous Categorie :</strong>
+					{{ assessment.category.name }}
+				</div>
+				<div class="clearfix">&nbsp;</div>
+				<div class="col-md-6 text-center">
 					<strong>Note max :</strong>
 					{{ assessment.maxScore }}
 				</div>
-				<div class="clearfix">&nbsp;</div>
-				<div class="col-md-12 text-center">
+				<div class="col-md-6 text-center">
 					<strong>Date :</strong>
 					{{ assessment.date|date('d/m/Y') }}
 				</div>

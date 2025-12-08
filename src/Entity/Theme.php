@@ -20,12 +20,12 @@ class Theme
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(targetEntity: Assessment::class, mappedBy: 'theme', orphanRemoval: true)]
-    private Collection $assessments;
+    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'theme', orphanRemoval: true)]
+    private Collection $categories;
 
     public function __construct()
     {
-        $this->assessments = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -51,29 +51,29 @@ class Theme
     }
 
     /**
-     * @return Collection<int, Assessment>
+     * @return Collection<int, Category>
      */
-    public function getAssessments(): Collection
+    public function getCategories(): Collection
     {
-        return $this->assessments;
+        return $this->categories;
     }
 
-    public function addAssessment(Assessment $assessment): static
+    public function addCategory(Category $category): static
     {
-        if (! $this->assessments->contains($assessment)) {
-            $this->assessments->add($assessment);
-            $assessment->setTheme($this);
+        if (! $this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->setTheme($this);
         }
 
         return $this;
     }
 
-    public function removeAssessment(Assessment $assessment): static
+    public function removeCategory(Assessment $category): static
     {
-        if ($this->assessments->removeElement($assessment)) {
+        if ($this->categories->removeElement($category)) {
             // set the owning side to null (unless already changed)
-            if ($assessment->getTheme() === $this) {
-                $assessment->setTheme(null);
+            if ($categories->getTheme() === $this) {
+                $categories->setTheme(null);
             }
         }
 

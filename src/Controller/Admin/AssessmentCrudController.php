@@ -38,7 +38,7 @@ class AssessmentCrudController extends AbstractCrudController
     {
         return $filters
             ->add(EntityFilter::new('schoolClass', 'Classe'))
-            ->add(EntityFilter::new('theme', 'Thème'));
+            ->add(EntityFilter::new('Category', 'Categorie'));
     }
 
     public function configureFields(string $pageName): iterable
@@ -46,7 +46,7 @@ class AssessmentCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('title', 'Titre'),
-            AssociationField::new('theme', 'Thème')
+            AssociationField::new('category', 'Catégorie')
                 ->setRequired(true),
             AssociationField::new('schoolClass', 'Classe')
                 ->setRequired(true),

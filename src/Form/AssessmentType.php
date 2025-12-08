@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Assessment;
-use App\Entity\Theme;
+use App\Entity\Category;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -24,10 +24,15 @@ class AssessmentType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre de l’évaluation',
             ])
-            ->add('theme', EntityType::class, [
-                'class' => Theme::class,
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
                 'choice_label' => 'name',
-                'label' => 'Thème',
+                'label' => 'Catégorie',
+                'query_builder' => function (\Doctrine\ORM\EntityRepository $er) {
+                    return $er->createQueryBuilder('c')
+                        ->where('c.parent IS NOT NULL')
+                        ->orderBy('c.name', 'ASC');
+                },
             ])
             ->add('maxScore', IntegerType::class, [
                 'label' => 'Note maximale',

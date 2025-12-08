@@ -52,11 +52,13 @@
 		{% endfor %}
 	</div>
 	{% block body %}{% endblock %}
-</div></main><div class="footer d-flex">
-<a href="{{ path('app_home') }}" class="active">
+</div></main>
+<div class="footer d-flex">
+
+<a href="{{ path('app_home') }}" class="{% if app.request.attributes.get('_route') =='app_home' %} active {% endif %}">
 	<i class="fa-solid fa fa-clipboard-list"></i><br/>Évaluations
 </a>
-<a href="{{ path('child_notes') }}" class="">
+<a href="{{ path('child_notes') }}" class="{% if app.request.attributes.get('_route') =='child_notes' %} active {% endif %}">
 	<i class="fa-solid fa-users"></i><br/>Enfants
 </a>
 {% if user.hasRole('ROLE_ADMIN') %}

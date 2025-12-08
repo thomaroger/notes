@@ -1,0 +1,72 @@
+<td colspan="5">
+	<div
+		class="container py-2">
+		{# 1ère ligne : Élèves notés / Élèves absents #}
+		<div class="row g-3 mb-3">
+			<div class="col-md-6 text-start">
+				<label>Élèves notés :
+					{{ partial_category.stats.present }}/{{ partial_category.stats.total }}</label>
+				<div class="progress">
+					<div class="progress-bar bg-success" style="width: {{ (partial_category.stats.present/partial_category.stats.total)*100 }}%"></div>
+				</div>
+			</div>
+			<div class="col-md-6 text-start">
+				<label>Élèves absents :
+					{{ partial_category.stats.absent }}/{{ partial_category.stats.total }}</label>
+				<div class="progress">
+					<div class="progress-bar bg-warning" style="width: {{ (partial_category.stats.absent/partial_category.stats.total)*100 }}%"></div>
+				</div>
+			</div>
+		</div>
+		<hr/>
+		{# 2ème ligne : Min / Max / Moyenne #}
+		<div class="row g-3 mb-3">
+			<div class="col-md-6 text-start">
+				<label>Nombre d'evaluations :
+					{{ partial_category.stats.numberAssessment }}/{{partial_category.stats.allAssessment}}</label>
+					<div class="progress">
+						<div class="progress-bar bg-info" style="width: {{ (partial_category.stats.numberAssessment/partial_category.stats.allAssessment)*100 }}%"></div>
+					</div>
+
+			</div>
+			<div class="col-md-6 text-start">
+				<label>Moyenne :
+					{{ partial_category.stats.avg|number_format(2) }}/{{partial_category.stats.maxscore|number_format(2)}}</label>
+
+					<div class="progress">
+						<div class="progress-bar bg-info" style="width: {{ (partial_category.stats.avg/partial_category.stats.maxscore)*100 }}%"></div>
+					</div>
+
+			</div>
+		</div>
+		<hr/>
+		{# 3ème ligne : Taux de réussite #}
+		<div class="row g-3">
+			<div class="col-md-4 text-start">
+				<label>Moins de 40% de réussite :
+					{{ partial_category.stats.less40 }}
+					élèves</label>
+				<div class="progress">
+					<div class="progress-bar bg-danger" style="width: {{ (partial_category.stats.less40/partial_category.stats.total)*100 }}%"></div>
+				</div>
+			</div>
+			<div class="col-md-4 text-start">
+				<label>41%-75% de réussite :
+					{{ partial_category.stats.between41_75 }}
+					élèves</label>
+				<div class="progress">
+					<div class="progress-bar bg-warning" style="width: {{ (partial_category.stats.between41_75/partial_category.stats.total)*100 }}%"></div>
+				</div>
+			</div>
+			<div class="col-md-4 text-start">
+				<label>Plus de 75% de réussite :
+					{{ partial_category.stats.more75 }}
+					élèves</label>
+				<div class="progress">
+					<div class="progress-bar bg-success" style="width: {{ (partial_category.stats.more75/partial_category.stats.total)*100 }}%"></div>
+				</div>
+			</div>
+		</div>
+		<hr/>
+	</div>
+</td>

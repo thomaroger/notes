@@ -66,7 +66,9 @@ class ChildController extends AbstractController
         // Groupement des évaluations par thème
         $groupedByTheme = [];
         foreach ($assessments as $assessment) {
-            $themeName = $assessment->getTheme()
+            $themeName = $assessment->getCategory()
+                ->getParent()
+                ->getTheme()
                 ->getName();
             if (! isset($groupedByTheme[$themeName])) {
                 $groupedByTheme[$themeName] = [];

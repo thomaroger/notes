@@ -24,7 +24,7 @@ class Assessment
 
     #[ORM\ManyToOne(inversedBy: 'assessments')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Theme $theme = null;
+    private ?Category $category = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -67,14 +67,14 @@ class Assessment
         return $this;
     }
 
-    public function getTheme(): ?Theme
+    public function getCategory(): ?Category
     {
-        return $this->theme;
+        return $this->category;
     }
 
-    public function setTheme(?Theme $theme): static
+    public function setCategory(?Category $category): static
     {
-        $this->theme = $theme;
+        $this->category = $category;
 
         return $this;
     }

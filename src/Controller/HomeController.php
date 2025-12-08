@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Assessment;
 use App\Form\AssessmentType;
 use App\Repository\AssessmentRepository;
+use App\Repository\StatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,14 +17,13 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(AssessmentRepository $assessmentRepository): Response
+    public function index(AssessmentRepository $assessmentRepository, StatRepository $statRepo): Response
     {
         $user = $this->getUser();
         if (! $user) {
             return $this->redirectToRoute('app_login');
         }
 
-        // Récupère les évaluations de la classe de l'utilisateur connecté
         $assessments = $assessmentRepository->findBy(
             [
                 'schoolClass' => $user->getSchoolClass(),
@@ -34,70 +34,83 @@ class HomeController extends AbstractController
         );
 
         foreach ($assessments as $assessment) {
-            $scores = $assessment->getScores();
-            $total = $assessment->getSchoolClass()
-                ->getChildren()
-                ->count();
-            $present = $scores->filter(fn ($s) => $s->getScore() !== null)
-                ->count();
-            $absent = $scores->filter(fn ($s) => $s->isAbsent() === true)
-                ->count();
+            $stat = $statRepo->findOneBy([
+                'entityType' => 'assessment',
+                'entityId' => $assessment->getId(),
+            ]);
 
-            $scoresValues = $scores
-                ->filter(fn ($s) => $s->getScore() !== null)
-                ->map(fn ($s) => $s->getScore())
-                ->toArray();
-
-            $min = $scoresValues ? min($scoresValues) : 0;
-            $max = $scoresValues ? max($scoresValues) : 0;
-            $avg = $scoresValues ? array_sum($scoresValues) / count($scoresValues) : 0;
-
-            $less40 = count(array_filter($scoresValues, fn ($s) => $s < 0.4 * $assessment->getMaxScore()));
-            $between41_75 = count(
-                array_filter(
-                    $scoresValues,
-                    fn ($s) => $s >= 0.41 * $assessment->getMaxScore() && $s <= 0.75 * $assessment->getMaxScore()
-                )
-            );
-            $more75 = count(array_filter($scoresValues, fn ($s) => $s > 0.75 * $assessment->getMaxScore()));
-            if ($total === 0) {
-                $total = 1;
+            if (! $stat) {
+                return $this->redirectToRoute('stats_stat');
             }
-            $assessment->stats = [
-                'total' => $total,
-                'present' => $present,
-                'absent' => $absent,
-                'min' => $min,
-                'max' => $max,
-                'avg' => $avg,
-                'less40' => $less40,
-                'between41_75' => $between41_75,
-                'more75' => $more75,
-            ];
+
+            $assessment->stats = $stat->getData();
         }
 
-        // Regroupe par thème
+        // Regroupe par Category / Theme
         $groupedByTheme = [];
         foreach ($assessments as $assessment) {
-            $themeName = $assessment->getTheme()
-                ->getName();
-            if (! isset($groupedByTheme[$themeName])) {
-                $groupedByTheme[$themeName] = [];
+            $category = $assessment->getCategory();
+            $parentCategory = $assessment->getCategory()
+                ->getParent();
+            $theme = $parentCategory->getTheme();
+
+            $themeStat = $statRepo->findOneBy([
+                'entityType' => 'theme',
+                'entityId' => $theme->getId(),
+            ]);
+
+            $theme->stats = $themeStat->getData();
+
+            $parentCategoryStat = $statRepo->findOneBy([
+                'entityType' => 'category',
+                'entityId' => $parentCategory->getId(),
+            ]);
+
+            $parentCategory->stats = $parentCategoryStat->getData();
+
+            $categoryStat = $statRepo->findOneBy([
+                'entityType' => 'category',
+                'entityId' => $category->getId(),
+            ]);
+
+            $category->stats = $categoryStat->getData();
+
+            if (! isset($groupedByTheme[$theme->getId()])) {
+                $groupedByTheme[$theme->getId()] = [
+                    'theme' => $theme,
+                    'categories' => [],
+                ];
             }
-            $groupedByTheme[$themeName][] = $assessment;
+            if (! isset($groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()])) {
+                $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()] = [
+                    'category' => $parentCategory,
+                    'categories' => [],
+                ];
+            }
+            if (! isset($groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()])) {
+                $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()] = [
+                    'category' => $category,
+                    'assessments' => [],
+                ];
+            }
+            $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()]['assessments'][] = $assessment;
         }
 
         ksort($groupedByTheme, SORT_NATURAL | SORT_FLAG_CASE);
 
-        foreach ($groupedByTheme as $assessments) {
-            foreach ($assessments as $assessment) {
-                $scores = $assessment->getScores()
-                    ->toArray(); // récupérer dans une variable
-                usort($scores, function ($a, $b) {
-                    return strcmp($a->getChild()->getLastName(), $b->getChild()->getLastName())
-                        ?: strcmp($a->getChild()->getFirstName(), $b->getChild()->getFirstName());
-                });
-                $assessment->setScores($scores); // si tu as un setter, mettre à jour l'objet
+        foreach ($groupedByTheme as $categories) {
+            foreach ($categories['categories'] as $subcategories) {
+                foreach ($subcategories['categories'] as $assessments) {
+                    foreach ($assessments['assessments'] as $assessment) {
+                        $scores = $assessment->getScores()
+                            ->toArray();
+                        usort($scores, function ($a, $b) {
+                            return strcmp($a->getChild()->getLastName(), $b->getChild()->getLastName())
+                                ?: strcmp($a->getChild()->getFirstName(), $b->getChild()->getFirstName());
+                        });
+                        $assessment->setScores($scores);
+                    }
+                }
             }
         }
 

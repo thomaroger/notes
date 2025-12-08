@@ -119,3 +119,8 @@ Projet privé – non redistribuable.
 
 ---
 
+##  TODO
+idem pour la partie enfants
+Refactoring (Service, Repository)
+Sécurité
+Formattage

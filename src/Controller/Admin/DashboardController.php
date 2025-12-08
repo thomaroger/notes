@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Assessment;
+use App\Entity\Category;
 use App\Entity\Child;
 use App\Entity\SchoolClass;
 use App\Entity\Score;
+use App\Entity\Stat;
 use App\Entity\Theme;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,7 +35,9 @@ class DashboardController extends AbstractDashboardController
             'assessments' => $this->entityManager->getRepository(Assessment::class)->count([]),
             'scores' => $this->entityManager->getRepository(Score::class)->count([]),
             'themes' => $this->entityManager->getRepository(Theme::class)->count([]),
+            'categories' => $this->entityManager->getRepository(Category::class)->count([]),
             'users' => $this->entityManager->getRepository(User::class)->count([]),
+            'stat' => $this->entityManager->getRepository(Stat::class)->count([]),
         ];
 
         return $this->render('admin/dashboard.html.twig', [
@@ -58,6 +62,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Notes', 'fa fa-star', Score::class);
         yield MenuItem::section('Thèmes');
         yield MenuItem::linkToCrud('Thèmes', 'fa fa-tag', Theme::class);
+        yield MenuItem::linkToCrud('Catégories', 'fa fa-book', Category::class);
+        yield MenuItem::section('Statistiques');
+        yield MenuItem::linkToCrud('Statistiques', 'fa fa-chart-area', Stat::class);
         yield MenuItem::section('Sécurité');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
         yield MenuItem::linkToUrl('Frontend', 'fa fa-globe', '/');
