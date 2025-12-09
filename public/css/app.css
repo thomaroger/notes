@@ -178,7 +178,6 @@ body {
   color: white;
 }
 
-
 .dark .footer a, .dark .form-signin a {
   color: white;
 }
@@ -211,4 +210,9 @@ a:hover {
 
 .card .card {
   margin : 10px;
+}
+
+.custom-tooltip {
+  --bs-tooltip-bg: var(--bs-body-bg);
+  --bs-tooltip-color: var(--bs-white);
 }

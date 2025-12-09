@@ -72,7 +72,9 @@ class StatController extends AbstractController
                     $subCategoryMaxScore = 0;
 
                     foreach ($subcategory->getAssessments() as $assessment) {
-                        // Vérifier si la stat existe déjà
+                        $less40child = ' ';
+                        $between41_75child = ' ';
+                        $more75child = ' ';
                         $existing = $statRepo->findOneBy([
                             'entityType' => 'assessment',
                             'entityId' => $assessment->getId(),
@@ -100,12 +102,24 @@ class StatController extends AbstractController
                         $between41_75 = count(
                             array_filter(
                                 $scoresValues,
-                                fn ($s) => $s >= 0.41 * $assessment->getMaxScore() && $s <= 0.74 * $assessment->getMaxScore()
+                                fn ($s) => $s >= 0.41 * $assessment->getMaxScore() && $s <= 0.75 * $assessment->getMaxScore()
                             )
                         );
-                        $more75 = count(array_filter($scoresValues, fn ($s) => $s > 0.74 * $assessment->getMaxScore()));
+                        $more75 = count(array_filter($scoresValues, fn ($s) => $s > 0.75 * $assessment->getMaxScore()));
                         if ($total === 0) {
                             $total = 1;
+                        }
+
+                        foreach ($assessment->getScores() as $score) {
+                            $child = $score->getChild();
+
+                            if (($score->getScore() / $assessment->getMaxScore()) * 100 <= 40) {
+                                $less40child .= $child->getFirstname() . ' ' . $child->getLastname() . ',';
+                            } elseif (($score->getScore() / $assessment->getMaxScore()) * 100 <= 75) {
+                                $between41_75child .= $child->getFirstname() . ' ' . $child->getLastname() . ',';
+                            } else {
+                                $more75child .= $child->getFirstname() . ' ' . $child->getLastname() . ',';
+                            }
                         }
 
                         // Calcul des stats via le service dédié
@@ -119,6 +133,9 @@ class StatController extends AbstractController
                         $data['less40'] = $less40;
                         $data['between41_75'] = $between41_75;
                         $data['more75'] = $more75;
+                        $data['less40child'] = trim($less40child, ',');
+                        $data['between41_75child'] = trim($between41_75child, ',');
+                        $data['more75child'] = trim($more75child, ',');
 
                         $subCategorytotal += $total;
                         $subCategoryPresent += $present;

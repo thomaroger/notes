@@ -43,7 +43,7 @@
         <hr/>
         <div class="row g-3">
             <div class="col-md-4 text-start">
-                <label>Moins de 40% de réussite :
+                <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.less40child}}" data-bs-custom-class="custom-tooltip">Moins de 40% de réussite :
                     {{ assessment.stats.less40 }}
                     élèves</label>
                 <div class="progress">
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="col-md-4 text-start">
-                <label>41%-75% de réussite :
+                <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.between41_75child}}" data-bs-custom-class="custom-tooltip">41%-75% de réussite :
                     {{ assessment.stats.between41_75 }}
                     élèves</label>
                 <div class="progress">
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="col-md-4 text-start">
-                <label>Plus de 75% de réussite :
+                <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.more75child}}" data-bs-custom-class="custom-tooltip">Plus de 75% de réussite :
                     {{ assessment.stats.more75 }}
                     élèves</label>
                 <div class="progress">
