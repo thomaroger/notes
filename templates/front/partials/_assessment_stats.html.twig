@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="col-md-6 text-start">
-                <label>Élèves absents :
+                <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.absentchild}}" data-bs-custom-class="custom-tooltip">Élèves absents :
                     {{ assessment.stats.absent }}/{{ assessment.stats.total }}</label>
                 <div class="progress">
                     <div class="progress-bar bg-warning" style="width: {{ (assessment.stats.absent/assessment.stats.total)*100 }}%"></div>

@@ -24,7 +24,6 @@ class StatController extends AbstractController
         AssessmentRepository $assessmentRepository,
         EntityManagerInterface $em
     ): Response {
-        // Récupération de l'enfant sélectionné (ou le premier par défaut)
         $user = $this->getUser();
         if (! $user) {
             return $this->redirectToRoute('app_login');
@@ -75,6 +74,7 @@ class StatController extends AbstractController
                         $less40child = ' ';
                         $between41_75child = ' ';
                         $more75child = ' ';
+                        $absentchild = ' ';
                         $existing = $statRepo->findOneBy([
                             'entityType' => 'assessment',
                             'entityId' => $assessment->getId(),
@@ -112,14 +112,16 @@ class StatController extends AbstractController
 
                         foreach ($assessment->getScores() as $score) {
                             $child = $score->getChild();
-
-                            if (($score->getScore() / $assessment->getMaxScore()) * 100 <= 40) {
+                            if ($score->isAbsent() === true) {
+                                $absentchild .= $child->getFirstname() . ' ' . $child->getLastname() . ',';
+                            } elseif (($score->getScore() / $assessment->getMaxScore()) * 100 <= 40) {
                                 $less40child .= $child->getFirstname() . ' ' . $child->getLastname() . ',';
                             } elseif (($score->getScore() / $assessment->getMaxScore()) * 100 <= 75) {
                                 $between41_75child .= $child->getFirstname() . ' ' . $child->getLastname() . ',';
                             } else {
                                 $more75child .= $child->getFirstname() . ' ' . $child->getLastname() . ',';
                             }
+
                         }
 
                         // Calcul des stats via le service dédié
@@ -136,6 +138,7 @@ class StatController extends AbstractController
                         $data['less40child'] = trim($less40child, ',');
                         $data['between41_75child'] = trim($between41_75child, ',');
                         $data['more75child'] = trim($more75child, ',');
+                        $data['absentchild'] = trim($absentchild, ',');
 
                         $subCategorytotal += $total;
                         $subCategoryPresent += $present;
