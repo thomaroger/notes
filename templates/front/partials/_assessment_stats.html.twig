@@ -33,10 +33,16 @@
                 </div>
             </div>
             <div class="col-md-4 text-start">
-                <label>Moyenne :
-                    {{ assessment.stats.avg|number_format(2) }}/{{ assessment.maxScore }}</label>
+                {% if (assessment.stats.avg/assessment.maxScore)*100 < 40 %}
+                    {% set bgClass = 'danger' %}
+                {% elseif (assessment.stats.avg/assessment.maxScore)*100 <= 75 %}
+                    {% set bgClass = 'warning' %}
+                {% else %}
+                    {% set bgClass = 'table-success' %}
+                {% endif %}
+                <label>Moyenne : {{ assessment.stats.avg|number_format(2) }}/{{ assessment.maxScore }} ({{ ((assessment.stats.avg|number_format(2)/assessment.maxScore)*100)|number_format(2) }}%)</label>
                 <div class="progress">
-                    <div class="progress-bar bg-info" style="width: {{ (assessment.stats.avg/assessment.maxScore)*100 }}%"></div>
+                    <div class="progress-bar bg-{{bgClass}}" style="width: {{ ((assessment.stats.avg/assessment.maxScore)*100) }}%"></div>
                 </div>
             </div>
         </div>

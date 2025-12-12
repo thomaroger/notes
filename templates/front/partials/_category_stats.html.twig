@@ -26,10 +26,18 @@
                 </div>
             </div>
             <div class="col-md-6 text-start">
-                <label>Moyenne :
-                    {{ partial_category.stats.avg|number_format(2) }}/{{partial_category.stats.maxscore|number_format(2)}}</label>
+                {% if (partial_category.stats.avg/partial_category.stats.maxscore)*100 < 40 %}
+                    {% set bgClass = 'danger' %}
+                {% elseif (partial_category.stats.avg/partial_category.stats.maxscore)*100 <= 75 %}
+                    {% set bgClass = 'warning' %}
+                {% else %}
+                    {% set bgClass = 'table-success' %}
+                {% endif %}
+
+
+                <label>Moyenne : {{ partial_category.stats.avg|number_format(2) }}/{{partial_category.stats.maxscore|number_format(2)}} ({{((partial_category.stats.avg/partial_category.stats.maxscore)*100)|number_format(2)}}%)</label>
                 <div class="progress">
-                    <div class="progress-bar bg-info" style="width: {{ (partial_category.stats.avg/partial_category.stats.maxscore)*100 }}%"></div>
+                    <div class="progress-bar bg-{{bgClass}}" style="width: {{ (partial_category.stats.avg/partial_category.stats.maxscore)*100 }}%"></div>
                 </div>
             </div>
         </div>
