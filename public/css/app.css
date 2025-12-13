@@ -216,3 +216,7 @@ a:hover {
   --bs-tooltip-bg: var(--bs-body-bg);
   --bs-tooltip-color: var(--bs-white);
 }
+
+.details {
+  font-size: 20px;
+}
