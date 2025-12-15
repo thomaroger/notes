@@ -2,14 +2,14 @@
     <div class="container py-2">
         <div class="row g-3 mb-3">
             <div class="col-md-6 text-start">
-                <label>Élèves notés : {{ assessment.stats.present }}/{{ assessment.stats.total }} ({{ ((assessment.stats.present|number_format(2)/assessment.maxScore)*100)|number_format(2) }}%)</label>
+                <label>Élèves notés : {{ assessment.stats.present }}/{{ assessment.stats.total }} ({{ ((assessment.stats.present|number_format(2)/assessment.stats.total)*100)|number_format(2) }}%)</label>
                 <div class="progress">
                     <div class="progress-bar bg-success" style="width: {{ (assessment.stats.present/assessment.stats.total)*100 }}%"></div>
                 </div>
             </div>
             <div class="col-md-6 text-start">
                 <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.absentchild}}" data-bs-custom-class="custom-tooltip">Élèves absents :
-                    {{ assessment.stats.absent }}/{{ assessment.stats.total }} ({{ ((assessment.stats.present|number_format(2)/assessment.maxScore)*100)|number_format(2) }}%)</label>
+                    {{ assessment.stats.absent }}/{{ assessment.stats.total }} ({{ ((assessment.stats.absent|number_format(2)/assessment.stats.total)*100)|number_format(2) }}%)</label>
                 <div class="progress">
                     <div class="progress-bar bg-warning" style="width: {{ (assessment.stats.absent/assessment.stats.total)*100 }}%"></div>
                 </div>
@@ -50,7 +50,7 @@
             <div class="col-md-4 text-start details">
                 <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.less40child}}" data-bs-custom-class="custom-tooltip">Moins de 40% de réussite :
                     {{ assessment.stats.less40 }}
-                    élèves ({{ ((assessment.stats.less40|number_format(2)/assessment.maxScore)*100)|number_format(0) }}%)</label>
+                    élèves ({{ ((assessment.stats.less40|number_format(2)/assessment.stats.total)*100)|number_format(0) }}%)</label>
                 <div class="progress">
                     <div class="progress-bar bg-danger" style="width: {{ (assessment.stats.less40/assessment.stats.total)*100 }}%"></div>
                 </div>
@@ -58,7 +58,7 @@
             <div class="col-md-4 text-start details">
                 <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.between41_75child}}" data-bs-custom-class="custom-tooltip">41%-75% de réussite :
                     {{ assessment.stats.between41_75 }}
-                    élèves ({{ ((assessment.stats.between41_75|number_format(2)/assessment.maxScore)*100)|number_format(0) }}%)</label>
+                    élèves ({{ ((assessment.stats.between41_75|number_format(2)/assessment.stats.total)*100)|number_format(0) }}%)</label>
                 <div class="progress">
                     <div class="progress-bar bg-warning" style="width: {{ (assessment.stats.between41_75/assessment.stats.total)*100 }}%"></div>
                 </div>
@@ -66,7 +66,7 @@
             <div class="col-md-4 text-start details">
                 <label data-bs-toggle="tooltip" data-bs-title="{{assessment.stats.more75child}}" data-bs-custom-class="custom-tooltip">Plus de 75% de réussite :
                     {{ assessment.stats.more75 }}
-                    élèves ({{ ((assessment.stats.more75|number_format(2)/assessment.maxScore)*100)|number_format(0) }}%)</label>
+                    élèves ({{ ((assessment.stats.more75|number_format(2)/assessment.stats.total)*100)|number_format(0) }}%)</label>
                 <div class="progress">
                     <div class="progress-bar bg-success" style="width: {{ (assessment.stats.more75/assessment.stats.total)*100 }}%"></div>
                 </div>
