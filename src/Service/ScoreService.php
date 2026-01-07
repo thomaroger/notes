@@ -7,6 +7,8 @@ namespace App\Service;
 use App\Entity\Assessment;
 use App\Entity\Child;
 use App\Entity\Score;
+use App\Repository\AssessmentRepository;
+use App\Repository\ChildRepository;
 use App\Repository\ScoreRepository;
 use App\Repository\StatRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,8 +18,82 @@ class ScoreService
     public function __construct(
         private readonly ScoreRepository $scoreRepository,
         private readonly StatRepository $statRepository,
+        private readonly ChildRepository $childRepository,
+        private readonly AssessmentRepository $assessmentRepository,
         private readonly EntityManagerInterface $entityManager
     ) {
+    }
+
+    /**
+     * Met à jour ou crée un score depuis une requête
+     *
+     * @return array{status: string, message?: string, score?: float|null}
+     */
+    public function updateScoreFromRequest(array $requestData): array
+    {
+        $childId = $requestData['childId'] ?? null;
+        $assessmentId = $requestData['assessmentId'] ?? null;
+
+        if (! $childId || ! $assessmentId) {
+            return [
+                'status' => 'error',
+                'message' => 'Paramètres manquants',
+            ];
+        }
+
+        $child = $this->childRepository->find($childId);
+        $assessment = $this->assessmentRepository->find($assessmentId);
+
+        if (! $child || ! $assessment) {
+            return [
+                'status' => 'error',
+                'message' => 'Élève ou évaluation introuvable',
+            ];
+        }
+
+        // Gestion de l'absence
+        if (isset($requestData['absent'])) {
+            $absent = (bool) $requestData['absent'];
+            $this->updateOrCreateScore($child, $assessment, null, $absent);
+
+            return [
+                'status' => 'success',
+                'message' => $absent ? 'Absent' : 'Présent',
+            ];
+        }
+
+        // Gestion de la note
+        if (isset($requestData['score'])) {
+            $scoreValue = $requestData['score'];
+
+            if (! is_numeric($scoreValue)) {
+                return [
+                    'status' => 'error',
+                    'message' => 'La note doit être un nombre',
+                ];
+            }
+
+            $scoreValue = (float) $scoreValue;
+
+            if (! $this->validateScore($scoreValue, $assessment)) {
+                return [
+                    'status' => 'error',
+                    'message' => "La note doit être entre 0 et {$assessment->getMaxScore()}",
+                ];
+            }
+
+            $score = $this->updateOrCreateScore($child, $assessment, $scoreValue, false);
+
+            return [
+                'status' => 'success',
+                'score' => $score->getScore(),
+            ];
+        }
+
+        return [
+            'status' => 'error',
+            'message' => 'Aucune donnée à enregistrer',
+        ];
     }
 
     /**

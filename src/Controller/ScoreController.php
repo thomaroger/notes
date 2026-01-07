@@ -6,8 +6,6 @@ namespace App\Controller;
 
 use App\Entity\Assessment;
 use App\Entity\User;
-use App\Repository\AssessmentRepository;
-use App\Repository\ChildRepository;
 use App\Service\ChildService;
 use App\Service\ScoreService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,74 +45,10 @@ class ScoreController extends AbstractController
 
     #[Route('/update', name: 'score_update', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function update(
-        Request $request,
-        ChildRepository $childRepository,
-        AssessmentRepository $assessmentRepository
-    ): JsonResponse {
-        $childId = $request->request->get('childId');
-        $assessmentId = $request->request->get('assessmentId');
+    public function update(Request $request): JsonResponse
+    {
+        $result = $this->scoreService->updateScoreFromRequest($request->request->all());
 
-        if (! $childId || ! $assessmentId) {
-            return new JsonResponse([
-                'status' => 'error',
-                'message' => 'Paramètres manquants',
-            ]);
-        }
-
-        $child = $childRepository->find($childId);
-        $assessment = $assessmentRepository->find($assessmentId);
-
-        if (! $child || ! $assessment) {
-            return new JsonResponse([
-                'status' => 'error',
-                'message' => 'Élève ou évaluation introuvable',
-            ]);
-        }
-
-        // Gestion de l'absence
-        if ($request->request->has('absent')) {
-            $absent = (bool) $request->request->get('absent');
-            $this->scoreService->updateOrCreateScore($child, $assessment, null, $absent);
-
-            return new JsonResponse([
-                'status' => 'success',
-                'message' => $absent ? 'Absent' : 'Présent',
-            ]);
-        }
-
-        // Gestion de la note
-        if ($request->request->has('score')) {
-            $scoreValue = $request->request->get('score');
-
-            if (! is_numeric($scoreValue)) {
-                return new JsonResponse([
-                    'status' => 'error',
-                    'message' => 'La note doit être un nombre',
-                ]);
-            }
-
-            $scoreValue = (float) $scoreValue;
-
-            // Validation côté serveur
-            if (! $this->scoreService->validateScore($scoreValue, $assessment)) {
-                return new JsonResponse([
-                    'status' => 'error',
-                    'message' => "La note doit être entre 0 et {$assessment->getMaxScore()}",
-                ]);
-            }
-
-            $score = $this->scoreService->updateOrCreateScore($child, $assessment, $scoreValue, false);
-
-            return new JsonResponse([
-                'status' => 'success',
-                'score' => $score->getScore(),
-            ]);
-        }
-
-        return new JsonResponse([
-            'status' => 'error',
-            'message' => 'Aucune donnée à enregistrer',
-        ]);
+        return new JsonResponse($result);
     }
 }
