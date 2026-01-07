@@ -2,16 +2,13 @@
 
 declare(strict_types=1);
 
-// src/Controller/Front/ScoreController.php
-
 namespace App\Controller;
 
 use App\Entity\Assessment;
-use App\Entity\Score;
 use App\Repository\AssessmentRepository;
 use App\Repository\ChildRepository;
-use App\Repository\ScoreRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ChildService;
+use App\Service\ScoreService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/score')]
 class ScoreController extends AbstractController
 {
+    public function __construct(
+        private readonly ChildService $childService,
+        private readonly ScoreService $scoreService
+    ) {
+    }
+
     #[Route('/edit/{assessment}', name: 'score_edit')]
     public function edit(Assessment $assessment): Response
     {
@@ -32,7 +35,7 @@ class ScoreController extends AbstractController
         $children = $assessment->getSchoolClass()
             ->getChildren()
             ->toArray();
-        usort($children, fn ($a, $b) => strcmp($a->getLastName(), $b->getLastName())); // ordre alphabétique
+        $children = $this->childService->sortChildrenByLastName($children);
 
         return $this->render('front/score/edit.html.twig', [
             'assessment' => $assessment,
@@ -44,12 +47,9 @@ class ScoreController extends AbstractController
     #[Route('/update', name: 'score_update', methods: ['POST'])]
     public function update(
         Request $request,
-        EntityManagerInterface $em,
-        ScoreRepository $scoreRepository,
         ChildRepository $childRepository,
         AssessmentRepository $assessmentRepository
     ): JsonResponse {
-
         $childId = $request->request->get('childId');
         $assessmentId = $request->request->get('assessmentId');
 
@@ -70,28 +70,10 @@ class ScoreController extends AbstractController
             ]);
         }
 
-        // Cherche le score existant ou en crée un nouveau
-        $score = $scoreRepository->findOneBy([
-            'child' => $child,
-            'assessment' => $assessment,
-        ]) ?? new Score();
-        $score->setChild($child);
-        $score->setAssessment($assessment);
-
         // Gestion de l'absence
         if ($request->request->has('absent')) {
             $absent = (bool) $request->request->get('absent');
-            $score->setAbsent($absent);
-
-            if ($absent) {
-                $score->setScore(null); // pas de note si absent
-            }
-
-            $em->persist($score);
-            $em->flush();
-
-            $connection = $em->getConnection();
-            $connection->executeStatement('TRUNCATE TABLE stat;');
+            $this->scoreService->updateOrCreateScore($child, $assessment, null, $absent);
 
             return new JsonResponse([
                 'status' => 'success',
@@ -103,22 +85,24 @@ class ScoreController extends AbstractController
         if ($request->request->has('score')) {
             $scoreValue = $request->request->get('score');
 
+            if (! is_numeric($scoreValue)) {
+                return new JsonResponse([
+                    'status' => 'error',
+                    'message' => 'La note doit être un nombre',
+                ]);
+            }
+
+            $scoreValue = (float) $scoreValue;
+
             // Validation côté serveur
-            if (! is_numeric($scoreValue) || $scoreValue < 0 || $scoreValue > $assessment->getMaxScore()) {
+            if (! $this->scoreService->validateScore($scoreValue, $assessment)) {
                 return new JsonResponse([
                     'status' => 'error',
                     'message' => "La note doit être entre 0 et {$assessment->getMaxScore()}",
                 ]);
             }
 
-            $score->setScore((float) $scoreValue);
-            $score->setAbsent(false); // note saisie → élève présent
-
-            $em->persist($score);
-            $em->flush();
-
-            $connection = $em->getConnection();
-            $connection->executeStatement('TRUNCATE TABLE stat;');
+            $score = $this->scoreService->updateOrCreateScore($child, $assessment, $scoreValue, false);
 
             return new JsonResponse([
                 'status' => 'success',

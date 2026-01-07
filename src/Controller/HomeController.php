@@ -6,8 +6,8 @@ namespace App\Controller;
 
 use App\Entity\Assessment;
 use App\Form\AssessmentType;
-use App\Repository\AssessmentRepository;
 use App\Repository\StatRepository;
+use App\Service\AssessmentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,102 +17,28 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(AssessmentRepository $assessmentRepository, StatRepository $statRepo): Response
+    public function index(AssessmentService $assessmentService, StatRepository $statRepo): Response
     {
         $user = $this->getUser();
         if (! $user) {
             return $this->redirectToRoute('app_login');
         }
 
-        $assessments = $assessmentRepository->findBy(
-            [
-                'schoolClass' => $user->getSchoolClass(),
-            ],
-            [
-                'date' => 'ASC',
-            ]
-        );
+        $assessments = $assessmentService->getAssessmentsWithStats($user->getSchoolClass());
 
+        // Vérifie que toutes les évaluations ont des stats
         foreach ($assessments as $assessment) {
-            $stat = $statRepo->findOneBy([
-                'entityType' => 'assessment',
-                'entityId' => $assessment->getId(),
-            ]);
-
+            $stat = $statRepo->findByEntityTypeAndId('assessment', $assessment->getId());
             if (! $stat) {
                 return $this->redirectToRoute('stats_stat');
             }
-
-            $assessment->stats = $stat->getData();
         }
 
-        // Regroupe par Category / Theme
-        $groupedByTheme = [];
-        foreach ($assessments as $assessment) {
-            $category = $assessment->getCategory();
-            $parentCategory = $assessment->getCategory()
-                ->getParent();
-            $theme = $parentCategory->getTheme();
+        // Groupe par thème et enrichit avec les stats
+        $groupedByTheme = $assessmentService->groupAssessmentsByTheme($assessments);
 
-            $themeStat = $statRepo->findOneBy([
-                'entityType' => 'theme',
-                'entityId' => $theme->getId(),
-            ]);
-
-            $theme->stats = $themeStat->getData();
-
-            $parentCategoryStat = $statRepo->findOneBy([
-                'entityType' => 'category',
-                'entityId' => $parentCategory->getId(),
-            ]);
-
-            $parentCategory->stats = $parentCategoryStat->getData();
-
-            $categoryStat = $statRepo->findOneBy([
-                'entityType' => 'category',
-                'entityId' => $category->getId(),
-            ]);
-
-            $category->stats = $categoryStat->getData();
-
-            if (! isset($groupedByTheme[$theme->getId()])) {
-                $groupedByTheme[$theme->getId()] = [
-                    'theme' => $theme,
-                    'categories' => [],
-                ];
-            }
-            if (! isset($groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()])) {
-                $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()] = [
-                    'category' => $parentCategory,
-                    'categories' => [],
-                ];
-            }
-            if (! isset($groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()])) {
-                $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()] = [
-                    'category' => $category,
-                    'assessments' => [],
-                ];
-            }
-            $groupedByTheme[$theme->getId()]['categories'][$parentCategory->getId()]['categories'][$category->getId()]['assessments'][] = $assessment;
-        }
-
-        ksort($groupedByTheme, SORT_NATURAL | SORT_FLAG_CASE);
-
-        foreach ($groupedByTheme as $categories) {
-            foreach ($categories['categories'] as $subcategories) {
-                foreach ($subcategories['categories'] as $assessments) {
-                    foreach ($assessments['assessments'] as $assessment) {
-                        $scores = $assessment->getScores()
-                            ->toArray();
-                        usort($scores, function ($a, $b) {
-                            return strcmp($a->getChild()->getLastName(), $b->getChild()->getLastName())
-                                ?: strcmp($a->getChild()->getFirstName(), $b->getChild()->getFirstName());
-                        });
-                        $assessment->setScores($scores);
-                    }
-                }
-            }
-        }
+        // Trie les scores de toutes les évaluations
+        $assessmentService->sortAllScoresInGroupedStructure($groupedByTheme);
 
         return $this->render('front/index.html.twig', [
             'user' => $user,

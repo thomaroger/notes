@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Assessment;
+use App\Entity\Child;
 use App\Entity\Score;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,5 +18,13 @@ class ScoreRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Score::class);
+    }
+
+    public function findOneByChildAndAssessment(Child $child, Assessment $assessment): ?Score
+    {
+        return $this->findOneBy([
+            'child' => $child,
+            'assessment' => $assessment,
+        ]);
     }
 }

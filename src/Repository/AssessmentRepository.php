@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Assessment;
+use App\Entity\SchoolClass;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,5 +17,17 @@ class AssessmentRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Assessment::class);
+    }
+
+    /**
+     * @return Assessment[]
+     */
+    public function findBySchoolClass(SchoolClass $schoolClass, array $orderBy = [
+        'date' => 'ASC',
+    ]): array
+    {
+        return $this->findBy([
+            'schoolClass' => $schoolClass,
+        ], $orderBy);
     }
 }
