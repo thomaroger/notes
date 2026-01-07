@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\AssessmentService;
 use App\Service\ChildService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ChildController extends AbstractController
 {
     #[Route('/child/notes', name: 'child_notes')]
+    #[IsGranted('ROLE_USER')]
     public function notes(
         Request $request,
         ChildService $childService,
         AssessmentService $assessmentService
     ): Response {
+        /** @var User $user */
         $user = $this->getUser();
-        if (! $user) {
-            return $this->redirectToRoute('app_login');
-        }
 
         $childId = $request->query->get('child');
         $children = $childService->getAllChildrenSorted();

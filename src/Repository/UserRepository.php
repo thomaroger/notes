@@ -22,6 +22,40 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Trouve un utilisateur par son email
+     */
+    public function findByEmail(string $email): ?User
+    {
+        return $this->findOneBy([
+            'email' => $email,
+        ]);
+    }
+
+    /**
+     * Trouve tous les utilisateurs avec un rôle spécifique
+     *
+     * @return User[]
+     */
+    public function findByRole(string $role): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.roles LIKE :role')
+            ->setParameter('role', '%' . $role . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve tous les administrateurs
+     *
+     * @return User[]
+     */
+    public function findAdmins(): array
+    {
+        return $this->findByRole('ROLE_ADMIN');
+    }
+
+    /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void

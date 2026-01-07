@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
+use App\Service\SecurityService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -12,7 +13,8 @@ use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 class LoginRedirectListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly SecurityService $securityService
     ) {
     }
 
@@ -26,13 +28,8 @@ class LoginRedirectListener implements EventSubscriberInterface
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
         $user = $event->getUser();
-
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true) && count($user->getRoles()) === 1) {
-            $response = new RedirectResponse($this->urlGenerator->generate('admin'));
-        } else {
-            $response = new RedirectResponse($this->urlGenerator->generate('app_home'));
-        }
-
+        $route = $this->securityService->getRedirectRouteAfterLogin($user);
+        $response = new RedirectResponse($this->urlGenerator->generate($route));
         $event->setResponse($response);
     }
 }

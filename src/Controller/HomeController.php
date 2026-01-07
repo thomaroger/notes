@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Assessment;
+use App\Entity\User;
 use App\Form\AssessmentType;
 use App\Repository\StatRepository;
 use App\Service\AssessmentService;
@@ -13,16 +14,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
+    #[IsGranted('ROLE_USER')]
     public function index(AssessmentService $assessmentService, StatRepository $statRepo): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
-        if (! $user) {
-            return $this->redirectToRoute('app_login');
-        }
 
         $assessments = $assessmentService->getAssessmentsWithStats($user->getSchoolClass());
 
@@ -47,12 +48,11 @@ class HomeController extends AbstractController
     }
 
     #[Route('/assessment/new', name: 'assessment_new')]
+    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
-        if (! $user) {
-            return $this->redirectToRoute('app_login');
-        }
 
         $assessment = new Assessment();
         $assessment->setSchoolClass($user->getSchoolClass());

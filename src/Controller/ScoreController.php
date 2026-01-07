@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Assessment;
+use App\Entity\User;
 use App\Repository\AssessmentRepository;
 use App\Repository\ChildRepository;
 use App\Service\ChildService;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/score')]
 class ScoreController extends AbstractController
@@ -25,12 +27,11 @@ class ScoreController extends AbstractController
     }
 
     #[Route('/edit/{assessment}', name: 'score_edit')]
+    #[IsGranted('ROLE_USER')]
     public function edit(Assessment $assessment): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
-        if (! $user) {
-            return $this->redirectToRoute('app_login');
-        }
 
         $children = $assessment->getSchoolClass()
             ->getChildren()
@@ -45,6 +46,7 @@ class ScoreController extends AbstractController
     }
 
     #[Route('/update', name: 'score_update', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function update(
         Request $request,
         ChildRepository $childRepository,

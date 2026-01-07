@@ -32,22 +32,19 @@ class StatService
     {
         $countAssessments = count($this->assessmentRepository->findAll());
         $themes = $this->themeRepository->findAll();
-        $created = 0;
 
         foreach ($themes as $theme) {
             // Calcule d'abord toutes les stats des catégories et évaluations
             $themeData = $this->computeThemeStats($theme, $countAssessments);
-
             // Crée la stat du thème
             $existing = $this->statRepository->findByEntityTypeAndId('theme', $theme->getId());
             if (! $existing) {
                 $themeStat = new Stat('theme', $theme->getId(), $themeData);
                 $this->entityManager->persist($themeStat);
-                $created++;
             }
         }
-
         $this->entityManager->flush();
+        $created = $this->statRepository->count([]);
         return $created;
     }
 

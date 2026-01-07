@@ -4,29 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\StatRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class StatResetController extends AbstractController
 {
     #[Route('/admin/reset_stat', name: 'admin_stat_reset')]
-    public function reset(EntityManagerInterface $em): Response
+    #[IsGranted('ROLE_ADMIN')]
+    public function reset(StatRepository $statRepository): Response
     {
-        $user = $this->getUser();
-        if (! $user) {
-            return $this->redirectToRoute('app_login');
-        }
+        $statRepository->truncateAll();
 
-        if (! $user->hasRole('ROLE_ADMIN')) {
-            throw new AccessDeniedException('Vous n\avez pas les accès nécessaires pour faire cette action.');
-        }
-
-        $connection = $em->getConnection();
-        $connection->executeStatement('TRUNCATE TABLE stat;');
+        $this->addFlash('success', 'Statistiques réinitialisées avec succès.');
 
         return $this->redirectToRoute('admin');
-
     }
 }
