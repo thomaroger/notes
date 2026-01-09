@@ -25,7 +25,8 @@ class ChildController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $childId = $request->query->get('child');
+        $childIdParam = $request->query->get('child');
+        $childId = $childIdParam !== null ? (int) $childIdParam : null;
         $children = $childService->getAllChildrenSorted();
 
         if (! $children) {
