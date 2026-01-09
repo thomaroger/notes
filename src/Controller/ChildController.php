@@ -54,6 +54,7 @@ class ChildController extends AbstractController
             'children' => $children,
             'groupedByTheme' => $groupedByTheme,
             'user' => $user,
+            'childService' => $childService,
         ]);
     }
 }

@@ -220,3 +220,34 @@ a:hover {
 .details {
   font-size: 20px;
 }
+
+/* Bouton de copie pour les commentaires */
+.copy-btn {
+  flex-shrink: 0;
+  min-width: 40px;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  transform: scale(1.1);
+}
+
+.copy-btn i {
+  font-size: 0.9rem;
+}
+
+/* Adaptation du bouton selon le thème */
+.table-danger .copy-btn {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+}
+
+.table-warning .copy-btn {
+  border-color: rgba(0, 0, 0, 0.3);
+  color: #000;
+}
+
+.table-success .copy-btn {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+}

@@ -175,12 +175,16 @@
                     <tbody>
                         {% if themeTotalMax == 0 %}
                             {% set rowClass = 'table-warning' %}
-                        {% elseif ((themeTotalScore / themeTotalMax) * 100) < 40 %}
-                            {% set rowClass = 'table-danger' %}
-                        {% elseif ((themeTotalScore / themeTotalMax) * 100) <= 75 %}
-                            {% set rowClass = 'table-warning' %}
+                            {% set themePercentage = null %}
                         {% else %}
-                            {% set rowClass = 'table-success' %}
+                            {% set themePercentage = ((themeTotalScore / themeTotalMax) * 100) %}
+                            {% if themePercentage < 40 %}
+                                {% set rowClass = 'table-danger' %}
+                            {% elseif themePercentage <= 75 %}
+                                {% set rowClass = 'table-warning' %}
+                            {% else %}
+                                {% set rowClass = 'table-success' %}
+                            {% endif %}
                         {% endif %}
                         <tr class="fw-bold {{rowClass}}">
                             <td colspan="2" class="text-start">Pourcentage
@@ -188,10 +192,24 @@
                             </td>
                             <td class="text-end">
                                 {% if themeTotalMax > 0 %}
-                                    {{ ((themeTotalScore / themeTotalMax) * 100)|number_format(0) }}%
+                                    {{ themePercentage|number_format(0) }}%
                                 {% else %}
                                     -
                                 {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="{{rowClass}}">
+                            <td colspan="3" class="text-start p-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <em class="flex-grow-1" id="comment-{{ theme.theme.id }}">{{ childService.getThemeComment(themePercentage, theme.theme.name, child.firstName) }}</em>
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-sm copy-btn {% if rowClass == 'table-warning' %}btn-outline-dark{% else %}btn-outline-light{% endif %}" 
+                                        data-comment-id="comment-{{ theme.theme.id }}"
+                                        title="Copier le commentaire">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>

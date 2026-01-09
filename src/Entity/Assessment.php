@@ -13,6 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: AssessmentRepository::class)]
 class Assessment
 {
+    public ?array $stats = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

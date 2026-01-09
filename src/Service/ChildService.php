@@ -71,4 +71,46 @@ class ChildService
         usort($children, fn ($a, $b) => strcmp($a->getLastName(), $b->getLastName()));
         return $children;
     }
+
+    /**
+     * Génère un commentaire en fonction du pourcentage de réussite par thème
+     * Format adapté pour les livrets scolaires
+     *
+     * @param float|null $percentage Le pourcentage de réussite (0-100) ou null si aucune note
+     * @param string $themeName Le nom du thème
+     * @param string $childFirstName Le prénom de l'enfant
+     * @return string Le commentaire approprié
+     */
+    public function getThemeComment(?float $percentage, string $themeName, string $childFirstName): string
+    {
+        if ($percentage === null || $percentage === 0) {
+            return sprintf(
+                'Dans le domaine "%s", %s n\'a pas encore été évalué(e) sur suffisamment d\'évaluations pour établir un bilan.',
+                $themeName,
+                $childFirstName
+            );
+        }
+
+        if ($percentage < 40) {
+            return sprintf(
+                'Dans le domaine "%s", %s rencontre des difficultés importantes. Les résultats obtenus sont insuffisants et nécessitent un travail de remise à niveau. Des efforts soutenus seront nécessaires pour progresser dans ce domaine.',
+                $themeName,
+                $childFirstName
+            );
+        }
+
+        if ($percentage <= 75) {
+            return sprintf(
+                'Dans le domaine "%s", %s montre une maîtrise partielle des compétences. Les résultats sont satisfaisants mais peuvent être améliorés. Des efforts supplémentaires et un travail régulier permettront de consolider les acquis et de progresser.',
+                $themeName,
+                $childFirstName
+            );
+        }
+
+        return sprintf(
+            'Dans le domaine "%s", %s démontre une très bonne maîtrise des compétences. Les résultats sont excellents et témoignent d\'un travail sérieux et régulier. Félicitations pour cette belle réussite.',
+            $themeName,
+            $childFirstName
+        );
+    }
 }
